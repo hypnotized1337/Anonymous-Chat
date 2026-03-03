@@ -12,6 +12,20 @@ Disclaimer: Most of the work is done by an AI. I have coded some of these things
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 MIT License
 Copyright (c) 2026
 
