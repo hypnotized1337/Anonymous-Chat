@@ -9,8 +9,6 @@ Klipy Integration: Built-in GIF search via Klipy API (bypassing restricted netwo
 
 Command-Line Admin: Type /admin to access a hidden terminal. Freeze the room, send global announcements, or "Nuke" the entire database instantly.
 
-Identity Guard: Real-time presence tracking prevents duplicate usernames within the same room.
-
 Image Sharing: Drag-and-drop or file-picker uploads with automatic metadata scrubbing and grayscale filtering.
 
 Preference Persistence: Notification and UI settings stay saved across refreshes without requiring a traditional account.
