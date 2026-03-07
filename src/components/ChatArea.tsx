@@ -232,12 +232,17 @@ export function ChatArea({
                   }`}
                 >
                   {msg.imageUrl && !imageExpired && (
-                    <img
-                      src={msg.imageUrl}
-                      alt="Shared image"
-                      className="max-w-full rounded-lg mb-1 border border-foreground/20 grayscale hover:grayscale-0 transition-all duration-300 cursor-pointer"
-                      loading="lazy"
-                    />
+                    <div className="relative">
+                      <img
+                        src={msg.imageUrl}
+                        alt="Shared image"
+                        className="max-w-full rounded-lg mb-1 border border-foreground/20 grayscale hover:grayscale-0 transition-all duration-300 cursor-pointer"
+                        loading="lazy"
+                      />
+                      {!msg.text && (
+                        <span className="absolute bottom-2 right-1.5 text-[8px] font-mono text-foreground/80 bg-background/60 px-1 py-0.5 rounded">via KLIPY</span>
+                      )}
+                    </div>
                   )}
                   {msg.imageUrl && imageExpired && (
                     <span className="text-[11px] italic text-muted-foreground">Image expired</span>
