@@ -75,6 +75,7 @@ export function ChatArea({
   const [unreadMarkerId, setUnreadMarkerId] = useState<string | null>(null);
   const [notificationJiggle, setNotificationJiggle] = useState(false);
   const [inspectedFile, setInspectedFile] = useState<InspectedFile | null>(null);
+  const [inspectedVideo, setInspectedVideo] = useState<InspectedVideo | null>(null);
   const [replyingTo, setReplyingTo] = useState<ReplyTo | null>(null);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 
