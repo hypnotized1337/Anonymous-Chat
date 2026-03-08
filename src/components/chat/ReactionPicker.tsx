@@ -107,13 +107,13 @@ export const ReactionPicker = memo(function ReactionPicker({ onSelect, quickReac
   }, [search]);
 
   const handlePick = (emoji: string) => {
-    record(emoji);
+    recordReaction(emoji);
     onSelect(emoji);
     setOpen(false);
   };
 
   const handleQuickPick = (emoji: string) => {
-    record(emoji);
+    recordReaction(emoji);
     onSelect(emoji);
   };
 
