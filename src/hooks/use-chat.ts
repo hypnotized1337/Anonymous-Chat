@@ -421,9 +421,16 @@ export function useChat() {
         if (status === 'SUBSCRIBED') {
           await channel.track({ username, joinedAt: Date.now() });
           channel.send({ type: 'broadcast', event: 'system', payload: systemMsg });
-          // If skipping duplicate check, resolve immediately
+          // Resolve after a delay to allow presence sync with duplicate info
           if (skipDuplicateCheck) {
             resolveJoin({ error: null });
+          } else {
+            setTimeout(() => {
+              if (!duplicateChecked) {
+                duplicateChecked = true;
+                resolveJoin({ error: null });
+              }
+            }, 1500);
           }
         }
       });
