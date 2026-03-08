@@ -103,6 +103,8 @@ export function useChat() {
   const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const remoteTypingTimeouts = useRef<Record<string, ReturnType<typeof setTimeout>>>({});
   const sendTimestamps = useRef<number[]>([]);
+  const notifCooldownRef = useRef<number | null>(null);
+  const pendingNotifCount = useRef(0);
 
   useEffect(() => { notificationsRef.current = state.notificationsEnabled; }, [state.notificationsEnabled]);
   useEffect(() => { usernameRef.current = state.username; }, [state.username]);
