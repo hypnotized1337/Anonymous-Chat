@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Loader2, GitCommit, Sparkles, Lock, Plus, LogIn } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, LayoutGroup } from 'framer-motion';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Switch } from '@/components/ui/switch';
 import { ChangelogDialog } from '@/components/ChangelogDialog';
@@ -223,6 +223,7 @@ export function JoinScreen({ onJoin }: JoinScreenProps) {
       <div className="grain-overlay" />
       
       <ChangelogDialog />
+      <LayoutGroup>
       <motion.form
         onSubmit={handleSubmit}
         className="w-full max-w-sm space-y-5 relative z-10"
@@ -241,7 +242,7 @@ export function JoinScreen({ onJoin }: JoinScreenProps) {
 
         {/* Mode tabs */}
         <motion.div
-          className="flex gap-1 justify-center"
+          className="flex gap-1 justify-center relative"
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.2 }}
@@ -250,27 +251,45 @@ export function JoinScreen({ onJoin }: JoinScreenProps) {
             type="button"
             onClick={() => switchMode('create')}
             disabled={isLoading}
-            className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono rounded-md transition-all ${
+            className={`relative flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono rounded-md transition-colors z-10 ${
               mode === 'create'
-                ? 'bg-primary text-primary-foreground'
-                : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+                ? 'text-primary-foreground'
+                : 'text-muted-foreground hover:text-foreground'
             }`}
           >
-            <Plus className="w-3 h-3" />
-            create room
+            {mode === 'create' && (
+              <motion.div
+                layoutId="tab-highlight"
+                className="absolute inset-0 bg-primary rounded-md"
+                transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+              />
+            )}
+            <span className="relative flex items-center gap-1.5">
+              <Plus className="w-3 h-3" />
+              create room
+            </span>
           </button>
           <button
             type="button"
             onClick={() => switchMode('join')}
             disabled={isLoading}
-            className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono rounded-md transition-all ${
+            className={`relative flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono rounded-md transition-colors z-10 ${
               mode === 'join'
-                ? 'bg-primary text-primary-foreground'
-                : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+                ? 'text-primary-foreground'
+                : 'text-muted-foreground hover:text-foreground'
             }`}
           >
-            <LogIn className="w-3 h-3" />
-            join room
+            {mode === 'join' && (
+              <motion.div
+                layoutId="tab-highlight"
+                className="absolute inset-0 bg-primary rounded-md"
+                transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+              />
+            )}
+            <span className="relative flex items-center gap-1.5">
+              <LogIn className="w-3 h-3" />
+              join room
+            </span>
           </button>
         </motion.div>
 
@@ -484,6 +503,7 @@ export function JoinScreen({ onJoin }: JoinScreenProps) {
           </Link>
         </motion.div>
       </motion.form>
+      </LayoutGroup>
     </div>
   );
 }
