@@ -487,7 +487,7 @@ export function JoinScreen({ onJoin }: JoinScreenProps) {
           animate={{ opacity: 1 }}
           transition={{ duration: 0.4, delay: 0.9 }}
         >
-          all messages self-destruct after 10 minutes. media is purged when the room empties. nothing is logged. nothing is stored.
+          messages self-destruct in 10m. media purged on exit. nothing stored.
         </motion.p>
         <motion.div
           className="flex flex-col items-center gap-1.5"
