@@ -220,6 +220,28 @@ export function ChatArea({
           {currentUser}
         </span>
         <div className="flex items-center gap-1">
+          <Popover>
+            <PopoverTrigger asChild>
+              <button className="p-2 rounded-md text-muted-foreground hover:text-foreground transition-colors">
+                <ZoomIn className="w-4 h-4" />
+              </button>
+            </PopoverTrigger>
+            <PopoverContent className="w-48 p-3" side="bottom" align="end">
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-[11px] font-mono text-muted-foreground">Scale</span>
+                  <span className="text-[11px] font-mono text-foreground">{uiScale}%</span>
+                </div>
+                <Slider
+                  value={[uiScale]}
+                  onValueChange={handleScaleChange}
+                  min={50}
+                  max={150}
+                  step={5}
+                />
+              </div>
+            </PopoverContent>
+          </Popover>
           <motion.button
             onClick={handleNotificationToggle}
             animate={notificationJiggle ? {
