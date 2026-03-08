@@ -83,12 +83,15 @@ const CATEGORIES = [
 
 interface ReactionPickerProps {
   onSelect: (emoji: string) => void;
+  recordReaction?: (emoji: string) => void;
 }
 
-export const ReactionPicker = memo(function ReactionPicker({ onSelect }: ReactionPickerProps) {
+export const ReactionPicker = memo(function ReactionPicker({ onSelect, recordReaction: externalRecord }: ReactionPickerProps) {
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
+  const { quickReactions, frequentlyUsed, recordReaction } = useFrequentReactions();
+  const record = externalRecord || recordReaction;
 
   useEffect(() => {
     if (open) {
