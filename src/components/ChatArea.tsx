@@ -208,9 +208,18 @@ export function ChatArea({
   const handleDragOver = (e: React.DragEvent) => { e.preventDefault(); };
   const handleDrop = (e: React.DragEvent) => { e.preventDefault(); dragCounter.current = 0; setDragging(false); const file = e.dataTransfer.files[0]; if (file) handleFileUpload(file); };
 
-  const isInputDisabled = frozen && frozenBy !== currentUser;
+  const { quickReactions, frequentlyUsed, recordReaction } = useFrequentReactions();
 
-  
+  const groupedMessages = useMemo(() => {
+    return messages.map((msg, i) => {
+      const prev = messages[i - 1];
+      const next = messages[i + 1];
+      const isGroupable = msg.type === 'message' && !msg.deleted;
+      const isFirstInGroup = !isGroupable || !prev || prev.type !== 'message' || prev.deleted || prev.username !== msg.username;
+      const isLastInGroup = !isGroupable || !next || next.type !== 'message' || next.deleted || next.username !== msg.username;
+      return { msg, groupInfo: { isFirstInGroup, isLastInGroup } };
+    });
+  }, [messages]);
 
   return (
     <div
