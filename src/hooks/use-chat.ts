@@ -3,6 +3,7 @@ import { ChatMessage, RoomUser, ChatState, ReplyTo } from '@/types/chat';
 import { supabase } from '@/integrations/supabase/client';
 import type { RealtimeChannel } from '@supabase/supabase-js';
 import { z } from 'zod';
+import { toast } from 'sonner';
 
 const generateId = () => Math.random().toString(36).substring(2, 12);
 const TEN_MINUTES = 10 * 60 * 1000;
@@ -321,10 +322,14 @@ export function useChat() {
       const parsed = safeParse(KickSchema, payload.payload);
       if (!parsed) return;
       if (parsed.username === usernameRef.current) {
-        // We are being kicked
+        // We are being kicked — untrack presence first
         if (channelRef.current) {
-          supabase.removeChannel(channelRef.current);
-          channelRef.current = null;
+          channelRef.current.untrack().then(() => {
+            if (channelRef.current) {
+              supabase.removeChannel(channelRef.current);
+              channelRef.current = null;
+            }
+          });
         }
         setState(prev => ({
           ...prev,
@@ -337,9 +342,11 @@ export function useChat() {
           frozen: false,
           frozenBy: null,
         }));
-        // Show alert after state reset
         setTimeout(() => {
-          alert('[SYSTEM]: YOU HAVE BEEN REMOVED');
+          toast.error('YOU HAVE BEEN REMOVED', {
+            description: 'An admin removed you from the void.',
+            duration: 5000,
+          });
         }, 100);
       } else {
         // Someone else was kicked — show system message
