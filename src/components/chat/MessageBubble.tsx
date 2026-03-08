@@ -41,7 +41,7 @@ const messageVariants = {
     transition: {
       duration: 0.25,
       delay: Math.min(i * 0.03, 0.3),
-      ease: [0.25, 0.46, 0.45, 0.94],
+      ease: 'easeOut' as const,
     },
   }),
 };
