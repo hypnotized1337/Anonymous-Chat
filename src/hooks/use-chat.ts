@@ -208,6 +208,7 @@ export function useChat() {
         typingUsers: [],
         frozen: false,
         frozenBy: null,
+        isPasswordProtected,
       }));
 
       const channel = supabase.channel(`room:${roomCode}`, {
