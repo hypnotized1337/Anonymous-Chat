@@ -137,7 +137,7 @@ export function ChatArea({
       }
     }
     lastMessageCountRef.current = newCount;
-  }, [messages, checkIfScrolledUp, scrollToBottom]);
+  }, [messages, checkIfScrolledUp, scrollToBottom, unreadMarkerId]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
