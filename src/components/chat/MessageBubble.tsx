@@ -7,12 +7,6 @@ import {
   ContextMenuContent,
   ContextMenuItem,
 } from '@/components/ui/context-menu';
-import {
-  Tooltip,
-  TooltipTrigger,
-  TooltipContent,
-  TooltipProvider,
-} from '@/components/ui/tooltip';
 import { ExternalLink } from 'lucide-react';
 import { toast } from 'sonner';
 import { StatusIcon } from './StatusIcon';
@@ -320,23 +314,24 @@ export const MessageBubble = memo(function MessageBubble({
       custom={index}
       className={groupInfo.isFirstInGroup ? 'mt-2' : 'mt-0.5'}
     >
-      <TooltipProvider delayDuration={400}>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <div>
-              <ContextMenu>
-                <ContextMenuTrigger asChild>
-                  <div className={`flex ${isOwn ? 'justify-end' : 'justify-start'}`}>{bubble}</div>
-                </ContextMenuTrigger>
-                {contextMenuItems}
-              </ContextMenu>
-            </div>
-          </TooltipTrigger>
-          <TooltipContent side={isOwn ? 'left' : 'right'} className="text-[10px] font-mono px-2 py-1">
-            {formatTime(msg.timestamp)}
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
+      <ContextMenu>
+        <ContextMenuTrigger asChild>
+          <div className={`group flex items-center gap-2 ${isOwn ? 'justify-end' : 'justify-start'}`}>
+            {isOwn && (
+              <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 text-[10px] font-mono text-muted-foreground whitespace-nowrap select-none">
+                {formatTime(msg.timestamp)}
+              </span>
+            )}
+            {bubble}
+            {!isOwn && (
+              <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 text-[10px] font-mono text-muted-foreground whitespace-nowrap select-none">
+                {formatTime(msg.timestamp)}
+              </span>
+            )}
+          </div>
+        </ContextMenuTrigger>
+        {contextMenuItems}
+      </ContextMenu>
     </motion.div>
   );
 });
