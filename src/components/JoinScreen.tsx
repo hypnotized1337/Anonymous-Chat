@@ -36,17 +36,24 @@ function GlitchTitle() {
 }
 
 async function checkPresence(roomName: string): Promise<boolean> {
-  const channel = supabase.channel(`presence-check:${roomName}:${Date.now()}`);
+  const channelName = `presence-check:${roomName}:${Math.random().toString(36).slice(2, 8)}`;
+  const channel = supabase.channel(channelName, {
+    config: { presence: { key: '_check' } },
+  });
+  
+  // Subscribe to the actual room channel to peek at presence
+  const roomChannel = supabase.channel(`room:${roomName}`);
   const hasUsers = await new Promise<boolean>((resolve) => {
     let resolved = false;
-    channel.on('presence', { event: 'sync' }, () => {
+    roomChannel.on('presence', { event: 'sync' }, () => {
       if (resolved) return;
       resolved = true;
-      resolve(Object.keys(channel.presenceState()).length > 0);
+      resolve(Object.keys(roomChannel.presenceState()).length > 0);
     });
-    channel.subscribe();
+    roomChannel.subscribe();
     setTimeout(() => { if (!resolved) { resolved = true; resolve(false); } }, 2000);
   });
+  supabase.removeChannel(roomChannel);
   supabase.removeChannel(channel);
   return hasUsers;
 }
