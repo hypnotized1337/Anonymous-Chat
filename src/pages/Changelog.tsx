@@ -4,28 +4,24 @@ import { ArrowLeft, GitCommit, Loader2, AlertCircle, Sparkles, X } from 'lucide-
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '@/integrations/supabase/client';
 
-interface Commit {
+interface CachedCommit {
   sha: string;
-  commit: {
-    message: string;
-    author: {
-      name: string;
-      date: string;
-    };
-  };
+  message: string;
+  author_name: string;
+  author_date: string;
   html_url: string;
 }
 
 interface GroupedCommits {
   date: string;
-  commits: Commit[];
+  commits: CachedCommit[];
 }
 
 const REPO = 'hypnotized1337/Anonymous-Chat';
 
 export default function Changelog() {
   const [commits, setCommits] = useState<GroupedCommits[]>([]);
-  const [allCommits, setAllCommits] = useState<Commit[]>([]);
+  const [allCommits, setAllCommits] = useState<CachedCommit[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [summary, setSummary] = useState<string | null>(null);
@@ -36,25 +32,16 @@ export default function Changelog() {
   useEffect(() => {
     async function fetchAllCommits() {
       try {
-        let allData: Commit[] = [];
-        let page = 1;
-        let hasMore = true;
+        const { data, error } = await supabase.functions.invoke('fetch-commits');
+        if (error) throw new Error(error.message);
+        if (data?.error) throw new Error(data.error);
 
-        while (hasMore) {
-          const res = await fetch(
-            `https://api.github.com/repos/${REPO}/commits?per_page=100&page=${page}`
-          );
-          if (!res.ok) throw new Error(`GitHub API returned ${res.status}`);
-          const data: Commit[] = await res.json();
-          allData = [...allData, ...data];
-          hasMore = data.length === 100;
-          page++;
-        }
-
+        const allData: CachedCommit[] = data.commits || [];
         setAllCommits(allData);
-        const grouped: Record<string, Commit[]> = {};
+
+        const grouped: Record<string, CachedCommit[]> = {};
         allData.forEach(c => {
-          const date = new Date(c.commit.author.date).toLocaleDateString('en-US', {
+          const date = new Date(c.author_date).toLocaleDateString('en-US', {
             year: 'numeric', month: 'short', day: 'numeric',
           });
           (grouped[date] ||= []).push(c);
@@ -75,7 +62,7 @@ export default function Changelog() {
     setSummaryError(null);
 
     try {
-      const commitMessages = allCommits.map(c => c.commit.message.split('\n')[0]);
+      const commitMessages = allCommits.map(c => c.message.split('\n')[0]);
       const latestSha = allCommits[0]?.sha;
       const { data, error } = await supabase.functions.invoke('summarize-changelog', {
         body: { commits: commitMessages, latest_sha: latestSha },
@@ -187,7 +174,7 @@ export default function Changelog() {
                   <GitCommit className="w-3 h-3 mt-0.5 text-muted-foreground shrink-0" />
                   <span className="text-muted-foreground font-medium shrink-0">{c.sha.slice(0, 7)}</span>
                   <span className="text-foreground/80 group-hover:text-foreground transition-colors truncate">
-                    {c.commit.message.split('\n')[0]}
+                    {c.message.split('\n')[0]}
                   </span>
                 </a>
               ))}

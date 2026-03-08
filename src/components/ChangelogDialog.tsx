@@ -1,49 +1,40 @@
 import { useState, useEffect } from 'react';
 import { GitCommit, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { supabase } from '@/integrations/supabase/client';
 
-const REPO = 'hypnotized1337/Anonymous-Chat';
 const STORAGE_KEY = 'v0id_last_seen_sha';
 
-interface Commit {
+interface CachedCommit {
   sha: string;
-  commit: {
-    message: string;
-    author: {
-      name: string;
-      date: string;
-    };
-  };
+  message: string;
+  author_name: string;
+  author_date: string;
   html_url: string;
 }
 
 export function ChangelogDialog() {
   const [open, setOpen] = useState(false);
-  const [newCommits, setNewCommits] = useState<Commit[]>([]);
+  const [newCommits, setNewCommits] = useState<CachedCommit[]>([]);
 
   useEffect(() => {
-    fetch(`https://api.github.com/repos/${REPO}/commits?per_page=10`)
-      .then(res => {
-        if (!res.ok) throw new Error('Failed');
-        return res.json();
-      })
-      .then((commits: Commit[]) => {
-        if (!commits.length) return;
+    supabase.functions.invoke('fetch-commits')
+      .then(({ data, error }) => {
+        if (error || data?.error || !data?.commits?.length) return;
 
+        const commits: CachedCommit[] = data.commits;
         const lastSeen = localStorage.getItem(STORAGE_KEY);
         const latestSha = commits[0].sha;
 
         if (!lastSeen) {
-          // First visit — store current SHA, don't show dialog
           localStorage.setItem(STORAGE_KEY, latestSha);
           return;
         }
 
-        if (lastSeen === latestSha) return; // No new commits
+        if (lastSeen === latestSha) return;
 
-        // Find commits since last seen
         const idx = commits.findIndex(c => c.sha === lastSeen);
-        const unseen = idx === -1 ? commits : commits.slice(0, idx);
+        const unseen = idx === -1 ? commits.slice(0, 10) : commits.slice(0, idx);
 
         if (unseen.length > 0) {
           setNewCommits(unseen);
@@ -51,7 +42,7 @@ export function ChangelogDialog() {
           localStorage.setItem(STORAGE_KEY, latestSha);
         }
       })
-      .catch(() => {}); // Silently fail
+      .catch(() => {});
   }, []);
 
   const handleClose = () => setOpen(false);
@@ -95,7 +86,7 @@ export function ChangelogDialog() {
                   <GitCommit className="w-3 h-3 mt-0.5 text-muted-foreground shrink-0" />
                   <span className="text-muted-foreground font-mono font-medium shrink-0">{c.sha.slice(0, 7)}</span>
                   <span className="text-foreground/80 group-hover:text-foreground font-mono text-[11px] transition-colors">
-                    {c.commit.message.split('\n')[0]}
+                    {c.message.split('\n')[0]}
                   </span>
                 </a>
               ))}
