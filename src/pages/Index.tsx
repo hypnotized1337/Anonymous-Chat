@@ -16,6 +16,16 @@ const Index = () => {
   const [adminOpen, setAdminOpen] = useState(false);
   const [authOverlay, setAuthOverlay] = useState(false);
   const [nuking, setNuking] = useState(false);
+  const [uiScale, setUiScale] = useState(() => {
+    const saved = localStorage.getItem('v0id-ui-scale');
+    return saved ? Number(saved) : 70;
+  });
+
+  const handleScaleChange = useCallback((val: number[]) => {
+    const s = val[0];
+    setUiScale(s);
+    localStorage.setItem('v0id-ui-scale', String(s));
+  }, []);
 
   useScreenshotDetect(broadcastScreenshot, state.isJoined);
 
