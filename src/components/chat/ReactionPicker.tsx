@@ -127,10 +127,10 @@ export const ReactionPicker = memo(function ReactionPicker({ onSelect, recordRea
       transition={{ duration: 0.12 }}
       className="flex gap-0.5 bg-card border border-border rounded-full px-1.5 py-0.5 shadow-md items-center"
     >
-      {QUICK_REACTIONS.map(emoji => (
+      {quickReactions.map(emoji => (
         <button
           key={emoji}
-          onClick={() => onSelect(emoji)}
+          onClick={() => handleQuickPick(emoji)}
           className="w-7 h-7 flex items-center justify-center rounded-full text-sm hover:bg-muted transition-colors active:scale-[0.9]"
         >
           {emoji}
