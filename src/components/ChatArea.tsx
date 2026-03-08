@@ -185,7 +185,7 @@ export function ChatArea({
 
   const isInputDisabled = frozen && frozenBy !== currentUser;
 
-  const maskedRoomName = useMemo(() => '*'.repeat(roomCode.length || 8), [roomCode]);
+  
 
   return (
     <div
