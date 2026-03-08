@@ -42,4 +42,5 @@ export interface ChatState {
   typingUsers: string[];
   frozen: boolean;
   frozenBy: string | null;
+  isPasswordProtected: boolean;
 }

@@ -93,6 +93,18 @@ Deno.serve(async (req) => {
       });
     }
 
+    if (action === "delete") {
+      // Delete room password (called when room empties)
+      await supabase
+        .from("room_passwords")
+        .delete()
+        .eq("room_code", roomCode);
+
+      return new Response(JSON.stringify({ success: true }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     return new Response(JSON.stringify({ error: "Unknown action" }), {
       status: 400,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
