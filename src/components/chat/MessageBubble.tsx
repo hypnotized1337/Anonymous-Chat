@@ -237,7 +237,15 @@ export const MessageBubble = memo(function MessageBubble({
               onImageClick={onImageClick}
             />
           )}
-          {hasFile && !isFileImageOrGif && (
+          {hasFile && isFileVideo && (
+            <VideoAttachment
+              fileUrl={msg.fileUrl!}
+              fileName={msg.fileName!}
+              isOwn={isOwn}
+              onOpen={() => onInspectVideo({ name: msg.fileName!, size: msg.fileSize, url: msg.fileUrl!, mimeType: msg.fileMimeType, timestamp: msg.timestamp })}
+            />
+          )}
+          {hasFile && !isFileImageOrGif && !isFileVideo && (
             <FileAttachment
               fileName={msg.fileName!}
               fileSize={msg.fileSize}
