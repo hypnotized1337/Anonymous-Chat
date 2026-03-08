@@ -16,6 +16,7 @@ interface ChatAreaProps {
   typingUsers: string[];
   frozen: boolean;
   frozenBy: string | null;
+  nuking: boolean;
   onSend: (text: string) => void;
   onTyping: () => void;
   onToggleNotifications: () => void;
@@ -34,6 +35,7 @@ export function ChatArea({
   typingUsers,
   frozen,
   frozenBy,
+  nuking,
   onSend,
   onTyping,
   onToggleNotifications,
@@ -216,9 +218,9 @@ export function ChatArea({
       )}
 
       {/* Messages */}
-      <div ref={scrollContainerRef} className="flex-1 overflow-y-auto scrollbar-thin p-4 space-y-2">
+      <div ref={scrollContainerRef} className="flex-1 overflow-y-auto scrollbar-thin p-4 space-y-2 relative">
         <AnimatePresence initial={false}>
-          {messages.map((msg, i) => (
+          {!nuking && messages.map((msg, i) => (
             <MessageBubble
               key={msg.id}
               msg={msg}
@@ -236,6 +238,59 @@ export function ChatArea({
             />
           ))}
         </AnimatePresence>
+
+        {/* Nuke dissolve overlay */}
+        <AnimatePresence>
+          {nuking && (
+            <>
+              {/* Particle shredder effect */}
+              <motion.div
+                initial={{ opacity: 1 }}
+                animate={{ opacity: 0 }}
+                transition={{ duration: 0.8, ease: 'easeIn' }}
+                className="absolute inset-0 z-10"
+              >
+                {Array.from({ length: 40 }).map((_, i) => (
+                  <motion.div
+                    key={i}
+                    initial={{
+                      opacity: 1,
+                      x: `${Math.random() * 100}%`,
+                      y: `${(i / 40) * 100}%`,
+                      scale: 1,
+                    }}
+                    animate={{
+                      opacity: 0,
+                      y: `${(i / 40) * 100 + 30 + Math.random() * 40}%`,
+                      x: `${Math.random() * 100}%`,
+                      scale: 0,
+                      rotate: Math.random() * 360,
+                    }}
+                    transition={{
+                      duration: 0.6 + Math.random() * 0.4,
+                      delay: (i / 40) * 0.4,
+                      ease: 'easeIn',
+                    }}
+                    className="absolute w-1 h-1 bg-foreground"
+                  />
+                ))}
+              </motion.div>
+
+              {/* ROOM NEUTRALIZED text */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 1.0, delay: 0.9 }}
+                className="absolute inset-0 flex items-center justify-center z-20"
+              >
+                <span className="text-xs font-mono text-muted-foreground tracking-widest">
+                  [SYSTEM]: ROOM NEUTRALIZED
+                </span>
+              </motion.div>
+            </>
+          )}
+        </AnimatePresence>
+
         <div ref={endRef} />
       </div>
 

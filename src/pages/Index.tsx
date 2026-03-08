@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { useChat } from '@/hooks/use-chat';
 import { useScreenshotDetect } from '@/hooks/use-screenshot-detect';
 import { JoinScreen } from '@/components/JoinScreen';
@@ -15,6 +15,7 @@ const Index = () => {
   } = useChat();
   const [adminOpen, setAdminOpen] = useState(false);
   const [authOverlay, setAuthOverlay] = useState(false);
+  const [nuking, setNuking] = useState(false);
 
   useScreenshotDetect(broadcastScreenshot, state.isJoined);
 
@@ -30,8 +31,20 @@ const Index = () => {
     sendMessage(text);
   };
 
+  const handleNuke = useCallback(() => {
+    setAdminOpen(false);
+    setNuking(true);
+    // Delay the actual data wipe so the animation plays over existing messages
+    setTimeout(() => {
+      nukeRoom();
+    }, 800);
+    // Clear nuking state after full animation completes
+    setTimeout(() => {
+      setNuking(false);
+    }, 2500);
+  }, [nukeRoom]);
+
   const handleJoin = async (username: string, roomCode: string) => {
-    // Admin bypass: skip duplicate check
     const isAdmin = sessionStorage.getItem('is_admin') === 'true';
     if (!isAdmin) {
       const available = await checkUsernameAvailable(username, roomCode);
@@ -62,6 +75,7 @@ const Index = () => {
         typingUsers={state.typingUsers}
         frozen={state.frozen}
         frozenBy={state.frozenBy}
+        nuking={nuking}
         onSend={handleSend}
         onTyping={sendTyping}
         onToggleNotifications={toggleNotifications}
@@ -82,7 +96,7 @@ const Index = () => {
           messages={state.messages}
           userCount={state.users.length}
           frozen={state.frozen}
-          onNuke={() => { nukeRoom(); setAdminOpen(false); }}
+          onNuke={handleNuke}
           onFreeze={freezeChat}
           onAnnounce={sendAnnouncement}
           onClose={() => setAdminOpen(false)}
