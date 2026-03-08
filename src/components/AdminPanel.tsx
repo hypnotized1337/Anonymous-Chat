@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Trash2, Eye, Lock, Megaphone, Users, UserX } from 'lucide-react';
+import { X, Trash2, Eye, Lock, Megaphone, Users, UserX, Clover } from 'lucide-react';
 import { ChatMessage, RoomUser } from '@/types/chat';
 
 interface AdminPanelProps {
