@@ -42,6 +42,8 @@ export function ChatArea({
   frozen,
   frozenBy,
   nuking,
+  uiScale,
+  onScaleChange,
   onSend,
   onTyping,
   onToggleNotifications,
