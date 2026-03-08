@@ -304,7 +304,7 @@ export function ChatArea({
             animate={{ opacity: 1 }}
             transition={{ duration: 0.8, delay: 0.3 }}
           >
-            <span className="text-sm font-mono text-muted-foreground/40 select-none">
+            <span className="text-sm font-mono text-muted-foreground/40 select-none void-pulse">
               say something into the void
             </span>
           </motion.div>
