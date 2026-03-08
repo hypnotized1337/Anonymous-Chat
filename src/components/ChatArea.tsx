@@ -492,6 +492,19 @@ export function ChatArea({
           />
         )}
       </AnimatePresence>
+
+      {/* Mobile sidebar sheet */}
+      <Sheet open={mobileSidebarOpen} onOpenChange={setMobileSidebarOpen}>
+        <SheetContent side="left" className="p-0 w-56">
+          <SheetTitle className="sr-only">Users</SheetTitle>
+          <ChatSidebar
+            roomCode={roomCode}
+            users={users}
+            currentUser={currentUser}
+            onLeave={() => { setMobileSidebarOpen(false); onLeave(); }}
+          />
+        </SheetContent>
+      </Sheet>
     </div>
   );
 }
