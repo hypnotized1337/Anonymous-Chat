@@ -87,7 +87,8 @@ export function JoinScreen({ onJoin }: JoinScreenProps) {
 
       setCheckingRoom(false);
       setJoining(true);
-      const result = await onJoin(username.trim(), roomName.trim());
+      const isProtected = passwordProtect || roomAlreadyHasPassword;
+      const result = await onJoin(username.trim(), roomName.trim(), isProtected);
       if (result.error) {
         setError(result.error);
         setJoining(false);

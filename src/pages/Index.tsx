@@ -57,9 +57,9 @@ const Index = () => {
     }, 2500);
   }, [nukeRoom]);
 
-  const handleJoin = async (username: string, roomCode: string) => {
+  const handleJoin = async (username: string, roomCode: string, isPasswordProtected: boolean) => {
     const isAdmin = sessionStorage.getItem('is_admin') === 'true';
-    const result = await joinRoom(username, roomCode, isAdmin);
+    const result = await joinRoom(username, roomCode, isAdmin, isPasswordProtected);
     return { error: result.error };
   };
 
