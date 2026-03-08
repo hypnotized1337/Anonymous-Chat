@@ -32,6 +32,7 @@ export interface MessageGroupInfo {
 interface MessageBubbleProps {
   msg: ChatMessage;
   isOwn: boolean;
+  currentUser: string;
   index: number;
   groupInfo: MessageGroupInfo;
   onImageClick: (url: string) => void;
@@ -108,6 +109,7 @@ function getBubbleRadius(isOwn: boolean, groupInfo: MessageGroupInfo) {
 export const MessageBubble = memo(function MessageBubble({
   msg,
   isOwn,
+  currentUser,
   index,
   groupInfo,
   onImageClick,
@@ -253,7 +255,7 @@ export const MessageBubble = memo(function MessageBubble({
               onClick={() => onReact(msg.id, emoji)}
               whileTap={{ scale: 1.3 }}
               className={`inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[11px] border transition-colors ${
-                users.includes(msg.username)
+                users.includes(currentUser)
                   ? 'border-foreground/30 bg-muted'
                   : 'border-border bg-card hover:border-foreground/20'
               }`}
