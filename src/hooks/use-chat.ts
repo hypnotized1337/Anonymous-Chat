@@ -8,6 +8,28 @@ import { toast } from 'sonner';
 const generateId = () => Math.random().toString(36).substring(2, 12);
 const TEN_MINUTES = 10 * 60 * 1000;
 
+/** Toggle a user in a reaction emoji's user list, returning updated reactions or undefined if empty */
+function toggleReaction(
+  reactions: Record<string, string[]> | undefined,
+  emoji: string,
+  username: string,
+): Record<string, string[]> | undefined {
+  const updated = { ...(reactions || {}) };
+  const users = [...(updated[emoji] || [])];
+  const idx = users.indexOf(username);
+  if (idx >= 0) {
+    users.splice(idx, 1);
+    if (users.length === 0) {
+      delete updated[emoji];
+    } else {
+      updated[emoji] = users;
+    }
+  } else {
+    updated[emoji] = [...users, username];
+  }
+  return Object.keys(updated).length > 0 ? updated : undefined;
+}
+
 // Rate limiting config
 const RATE_LIMIT_COUNT = 5;
 const RATE_LIMIT_WINDOW = 3000; // 3 seconds
