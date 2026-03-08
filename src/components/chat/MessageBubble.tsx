@@ -256,7 +256,11 @@ export const MessageBubble = memo(function MessageBubble({
             <motion.button
               key={emoji}
               onClick={() => onReact(msg.id, emoji)}
-              whileTap={{ scale: 1.3 }}
+              whileTap={{ scale: 1.4, rotate: 8 }}
+              whileHover={{ scale: 1.1 }}
+              initial={{ scale: 0, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ type: 'spring', stiffness: 500, damping: 20 }}
               className={`inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[11px] border transition-colors ${
                 users.includes(currentUser)
                   ? 'border-foreground/30 bg-muted'
