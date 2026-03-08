@@ -510,13 +510,15 @@ export function ChatArea({
       <Sheet open={mobileSidebarOpen} onOpenChange={setMobileSidebarOpen}>
         <SheetContent side="left" className="p-0 w-56">
           <SheetTitle className="sr-only">Users</SheetTitle>
-          <ChatSidebar
-            roomCode={roomCode}
-            users={users}
-            currentUser={currentUser}
-            onLeave={() => { setMobileSidebarOpen(false); onLeave(); }}
-            className="flex"
-          />
+          <div className="h-full">
+            <ChatSidebar
+              roomCode={roomCode}
+              users={users}
+              currentUser={currentUser}
+              onLeave={() => { setMobileSidebarOpen(false); onLeave(); }}
+              className="flex"
+            />
+          </div>
         </SheetContent>
       </Sheet>
     </div>
