@@ -153,7 +153,7 @@ export const MessageBubble = memo(function MessageBubble({
               fileSize={msg.fileSize}
               fileMimeType={msg.fileMimeType}
               isOwn={isOwn}
-              onInspect={() => onInspectFile({ name: msg.fileName!, size: msg.fileSize, url: msg.fileUrl! })}
+              onInspect={() => onInspectFile({ name: msg.fileName!, size: msg.fileSize, url: msg.fileUrl!, mimeType: msg.fileMimeType, timestamp: msg.timestamp })}
             />
           )}
           {msg.text}
