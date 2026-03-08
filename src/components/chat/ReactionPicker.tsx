@@ -189,6 +189,7 @@ export const ReactionPicker = memo(function ReactionPicker({ onSelect, recordRea
                     ))}
                   </div>
                 </div>
+                )}
                 {CATEGORIES.map(cat => (
                   <div key={cat.label}>
                     <span className="text-[9px] font-mono text-muted-foreground uppercase tracking-wider px-1">{cat.label}</span>
