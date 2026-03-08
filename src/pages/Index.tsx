@@ -11,7 +11,7 @@ const Index = () => {
   const {
     state, joinRoom, leaveRoom, sendMessage, sendTyping,
     toggleNotifications, nukeRoom, freezeChat, sendAnnouncement, editMessage, unsendMessage, sendImage, sendGif,
-    broadcastScreenshot, kickUser, reactToMessage,
+    broadcastScreenshot, kickUser, reactToMessage, toggleGingerMode,
   } = useChat();
   const [adminOpen, setAdminOpen] = useState(false);
   const [authOverlay, setAuthOverlay] = useState(false);
