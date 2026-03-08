@@ -277,7 +277,7 @@ export const MessageBubble = memo(function MessageBubble({
       <AnimatePresence>
         {showReactionPicker && (
           <div className={`flex ${isOwn ? 'justify-end' : 'justify-start'}`}>
-            <ReactionPicker onSelect={handleReact} />
+            <ReactionPicker onSelect={handleReact} quickReactions={quickReactions} frequentlyUsed={frequentlyUsed} recordReaction={recordReaction} />
           </div>
         )}
       </AnimatePresence>
