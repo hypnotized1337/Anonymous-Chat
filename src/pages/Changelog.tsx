@@ -88,6 +88,7 @@ export default function Changelog() {
       if (error) throw new Error(error.message);
       if (data?.error) throw new Error(data.error);
       setSummary(data.summary);
+      setSummaryCached(!!data.cached);
     } catch (e: any) {
       setSummaryError(e.message || 'Failed to summarize');
     } finally {
