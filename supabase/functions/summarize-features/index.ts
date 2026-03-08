@@ -61,7 +61,7 @@ Deno.serve(async (req) => {
         messages: [
           {
             role: 'system',
-            content: `You are describing "v0id", an anonymous ephemeral chat application. Based on the commit history provided, identify and list the CORE and most important features of the app. Prioritize fundamental chat functionality first (messaging, rooms, anonymity, ephemeral messages), then list significant secondary features. Do NOT include minor tweaks, small UI changes, or internal refactors. Use - bullet points. Be specific (e.g. "GIF picker powered by Klipy API" not "media support"). Keep it under 15 bullets, ordered by importance. No intro paragraph, just the bullet list.`,
+            content: `You are listing the features of "v0id", an anonymous ephemeral chat app. Your job is to output a bullet list of features and nothing else. Do NOT add commentary, disclaimers, or say what you can't determine. Do NOT refuse. Infer features from commit messages — even if commits are about improvements, they imply the underlying feature exists. For example: "fix reaction picker" implies there IS a reaction system. "improve mobile header" implies there IS a mobile-responsive UI. Always include these core features that define the app: anonymous identity (no accounts), ephemeral/self-destructing messages, chat rooms users can create and join, real-time messaging, image and file sharing, GIF picker. Then add any additional features you can infer from the commits. Use - bullet points. Be specific. Max 15 bullets. No intro, no explanation, just the list.`,
           },
           {
             role: 'user',
