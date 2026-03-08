@@ -36,27 +36,20 @@ function GlitchTitle() {
 }
 
 async function checkPresence(roomName: string): Promise<boolean> {
-  const uid = Math.random().toString(36).slice(2, 8);
-  const channel = supabase.channel(`peek:${roomName}:${uid}`, {
-    config: { presence: { key: `_peek_${uid}` } },
-  });
-
-  // We can't peek at another channel's presence directly.
-  // Instead, we briefly join the real room channel, read presence, then leave cleanly.
-  const realChannel = supabase.channel(`room:${roomName}`);
+  const channel = supabase.channel(`room:${roomName}`);
   const hasUsers = await new Promise<boolean>((resolve) => {
     let resolved = false;
-    realChannel.on('presence', { event: 'sync' }, () => {
+    channel.on('presence', { event: 'sync' }, () => {
       if (resolved) return;
       resolved = true;
-      resolve(Object.keys(realChannel.presenceState()).length > 0);
+      resolve(Object.keys(channel.presenceState()).length > 0);
     });
-    realChannel.subscribe();
+    channel.subscribe();
     setTimeout(() => { if (!resolved) { resolved = true; resolve(false); } }, 2000);
   });
-  // Unsubscribe without tracking — we never tracked presence, so this is safe
-  supabase.removeChannel(realChannel);
   supabase.removeChannel(channel);
+  // Allow server to fully clean up before re-subscribing in joinRoom
+  await new Promise(r => setTimeout(r, 300));
   return hasUsers;
 }
 
