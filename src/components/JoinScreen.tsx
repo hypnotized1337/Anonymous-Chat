@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Loader2, GitCommit, Sparkles, Lock } from 'lucide-react';
+import { ArrowRight, Loader2, GitCommit, Sparkles, Lock, Plus, LogIn } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Switch } from '@/components/ui/switch';
@@ -35,7 +35,24 @@ function GlitchTitle() {
   );
 }
 
+async function checkPresence(roomName: string): Promise<boolean> {
+  const channel = supabase.channel(`room:${roomName}`);
+  const hasUsers = await new Promise<boolean>((resolve) => {
+    let resolved = false;
+    channel.on('presence', { event: 'sync' }, () => {
+      if (resolved) return;
+      resolved = true;
+      resolve(Object.keys(channel.presenceState()).length > 0);
+    });
+    channel.subscribe();
+    setTimeout(() => { if (!resolved) { resolved = true; resolve(false); } }, 2000);
+  });
+  supabase.removeChannel(channel);
+  return hasUsers;
+}
+
 export function JoinScreen({ onJoin }: JoinScreenProps) {
+  const [mode, setMode] = useState<'create' | 'join'>('create');
   const [username, setUsername] = useState('');
   const [roomName, setRoomName] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -43,125 +60,146 @@ export function JoinScreen({ onJoin }: JoinScreenProps) {
   const [joining, setJoining] = useState(false);
   const [passwordProtect, setPasswordProtect] = useState(false);
   const [roomPassword, setRoomPassword] = useState('');
-  // State for when joining a password-protected room
   const [needsPassword, setNeedsPassword] = useState(false);
   const [joinPassword, setJoinPassword] = useState('');
   const [checkingRoom, setCheckingRoom] = useState(false);
 
-  const handleJoin = async (e: React.FormEvent) => {
+  const resetState = () => {
+    setError(null);
+    setRoomTaken(false);
+    setNeedsPassword(false);
+    setJoinPassword('');
+    setPasswordProtect(false);
+    setRoomPassword('');
+  };
+
+  const switchMode = (newMode: 'create' | 'join') => {
+    if (newMode === mode) return;
+    setMode(newMode);
+    resetState();
+  };
+
+  const handleCreate = async () => {
+    const room = roomName.trim();
+    const hasActiveUsers = await checkPresence(room);
+
+    if (hasActiveUsers) {
+      setRoomTaken(true);
+      setError('ROOM ALREADY EXISTS');
+      toast.error('ROOM ALREADY EXISTS', {
+        description: 'This room code is already in use. Choose a different code.',
+        duration: 4000,
+      });
+      setCheckingRoom(false);
+      return;
+    }
+
+    // Clean stale password if any
+    const { data: checkData } = await supabase.functions.invoke('room-password', {
+      body: { action: 'check', roomCode: room },
+    });
+    if (checkData?.hasPassword) {
+      await supabase.functions.invoke('room-password', {
+        body: { action: 'delete', roomCode: room },
+      });
+    }
+
+    // Set password if toggled
+    if (passwordProtect && roomPassword.trim()) {
+      await supabase.functions.invoke('room-password', {
+        body: { action: 'set', roomCode: room, password: roomPassword.trim(), username: username.trim() },
+      });
+    }
+
+    setCheckingRoom(false);
+    setJoining(true);
+    const result = await onJoin(username.trim(), room, passwordProtect && !!roomPassword.trim());
+    if (result.error) {
+      setError(result.error);
+      setJoining(false);
+    }
+  };
+
+  const handleJoinRoom = async () => {
+    const room = roomName.trim();
+
+    const { data: checkData } = await supabase.functions.invoke('room-password', {
+      body: { action: 'check', roomCode: room },
+    });
+    const roomHasPassword = checkData?.hasPassword;
+
+    const hasActiveUsers = await checkPresence(room);
+
+    if (roomHasPassword && !hasActiveUsers) {
+      // Stale password, clean up
+      await supabase.functions.invoke('room-password', {
+        body: { action: 'delete', roomCode: room },
+      });
+      // Room doesn't exist anymore
+      setError('ROOM NOT FOUND');
+      toast.error('ROOM NOT FOUND', {
+        description: 'No active room with this code exists. Try creating one instead.',
+        duration: 4000,
+      });
+      setCheckingRoom(false);
+      return;
+    }
+
+    if (!hasActiveUsers && !roomHasPassword) {
+      setError('ROOM NOT FOUND');
+      toast.error('ROOM NOT FOUND', {
+        description: 'No active room with this code exists. Try creating one instead.',
+        duration: 4000,
+      });
+      setCheckingRoom(false);
+      return;
+    }
+
+    if (roomHasPassword) {
+      if (!needsPassword) {
+        setNeedsPassword(true);
+        toast.info('ROOM IS LOCKED', {
+          description: 'This room is password-protected. Enter the password to join.',
+          duration: 5000,
+        });
+        setCheckingRoom(false);
+        return;
+      }
+
+      const { data: verifyData } = await supabase.functions.invoke('room-password', {
+        body: { action: 'verify', roomCode: room, password: joinPassword.trim() },
+      });
+      if (!verifyData?.valid) {
+        setError('WRONG PASSWORD');
+        toast.error('ACCESS DENIED', {
+          description: 'The password you entered is incorrect. Please try again.',
+          duration: 4000,
+        });
+        setCheckingRoom(false);
+        return;
+      }
+    }
+
+    setCheckingRoom(false);
+    setJoining(true);
+    const result = await onJoin(username.trim(), room, !!roomHasPassword);
+    if (result.error) {
+      setError(result.error);
+      setJoining(false);
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!username.trim() || !roomName.trim()) return;
     setError(null);
     setCheckingRoom(true);
 
     try {
-      // Always check if room already has a password first
-      const { data: checkData } = await supabase.functions.invoke('room-password', {
-        body: { action: 'check', roomCode: roomName.trim() },
-      });
-
-      const roomAlreadyHasPassword = checkData?.hasPassword;
-
-      let roomIsActiveAndLocked = false;
-
-      if (roomAlreadyHasPassword) {
-        // Check if anyone is actually in the room
-        const presenceChannel = supabase.channel(`room:${roomName.trim()}`);
-        const hasActiveUsers = await new Promise<boolean>((resolve) => {
-          let resolved = false;
-          presenceChannel.on('presence', { event: 'sync' }, () => {
-            if (resolved) return;
-            resolved = true;
-            const users = Object.keys(presenceChannel.presenceState());
-            resolve(users.length > 0);
-          });
-          presenceChannel.subscribe();
-          setTimeout(() => { if (!resolved) { resolved = true; resolve(false); } }, 2000);
-        });
-        supabase.removeChannel(presenceChannel);
-
-        if (!hasActiveUsers) {
-          // Stale password — room is inactive, clean it up
-          await supabase.functions.invoke('room-password', {
-            body: { action: 'delete', roomCode: roomName.trim() },
-          });
-          // Proceed as if no password existed
-        } else {
-          roomIsActiveAndLocked = true;
-          // Room is active and password-protected
-          if (!needsPassword) {
-            const hadPasswordToggle = passwordProtect;
-            toast.info('ROOM ALREADY IN USE', {
-              description: hadPasswordToggle
-                ? 'This room name is already taken and password-protected. Your password settings were ignored. Enter the existing password to join.'
-                : 'This room name is already taken and password-protected. Enter the password to join.',
-              duration: 5000,
-            });
-            setNeedsPassword(true);
-            setPasswordProtect(false);
-            setRoomTaken(true);
-            setCheckingRoom(false);
-            return;
-          }
-          const { data: verifyData } = await supabase.functions.invoke('room-password', {
-            body: { action: 'verify', roomCode: roomName.trim(), password: joinPassword.trim() },
-          });
-
-          if (!verifyData?.valid) {
-            setError('WRONG PASSWORD');
-            toast.error('ACCESS DENIED', {
-              description: 'The password you entered is incorrect. Please try again.',
-              duration: 4000,
-            });
-            setCheckingRoom(false);
-            return;
-          }
-        }
-      }
-
-      // If stale password was cleaned up or room never had a password, allow setting new one
-      const stillHasPassword = roomIsActiveAndLocked;
-      if (!stillHasPassword && passwordProtect && roomPassword.trim()) {
-        // Only allow setting a password if the room is empty (no active users)
-        const channel2 = supabase.channel(`room-check:${roomName.trim()}`);
-        const roomHasUsers = await new Promise<boolean>((resolve) => {
-          let resolved = false;
-          channel2.on('presence', { event: 'sync' }, () => {
-            if (resolved) return;
-            resolved = true;
-            const users = Object.keys(channel2.presenceState());
-            resolve(users.length > 0);
-          });
-          channel2.subscribe();
-          setTimeout(() => { if (!resolved) { resolved = true; resolve(false); } }, 2000);
-        });
-        supabase.removeChannel(channel2);
-
-        if (roomHasUsers) {
-          setRoomTaken(true);
-          setError('ROOM ALREADY ACTIVE');
-          toast.error('CANNOT SET PASSWORD', {
-            description: 'This room already has active users. You cannot add a password to an existing room.',
-            duration: 4000,
-          });
-          setPasswordProtect(false);
-          setRoomPassword('');
-          setCheckingRoom(false);
-          return;
-        }
-
-        await supabase.functions.invoke('room-password', {
-          body: { action: 'set', roomCode: roomName.trim(), password: roomPassword.trim(), username: username.trim() },
-        });
-      }
-
-      setCheckingRoom(false);
-      setJoining(true);
-      const isProtected = passwordProtect || roomAlreadyHasPassword;
-      const result = await onJoin(username.trim(), roomName.trim(), isProtected);
-      if (result.error) {
-        setError(result.error);
-        setJoining(false);
+      if (mode === 'create') {
+        await handleCreate();
+      } else {
+        await handleJoinRoom();
       }
     } catch {
       setError('CONNECTION FAILED');
@@ -173,13 +211,20 @@ export function JoinScreen({ onJoin }: JoinScreenProps) {
 
   const isLoading = joining || checkingRoom;
 
+  const isSubmitDisabled =
+    !username.trim() ||
+    !roomName.trim() ||
+    isLoading ||
+    (mode === 'create' && passwordProtect && !roomPassword.trim()) ||
+    (mode === 'join' && needsPassword && !joinPassword.trim());
+
   return (
     <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
       <div className="grain-overlay" />
       
       <ChangelogDialog />
       <motion.form
-        onSubmit={handleJoin}
+        onSubmit={handleSubmit}
         className="w-full max-w-sm space-y-5 relative z-10"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -192,6 +237,41 @@ export function JoinScreen({ onJoin }: JoinScreenProps) {
           transition={{ duration: 0.5, delay: 0.1 }}
         >
           <GlitchTitle />
+        </motion.div>
+
+        {/* Mode tabs */}
+        <motion.div
+          className="flex gap-1 justify-center"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.2 }}
+        >
+          <button
+            type="button"
+            onClick={() => switchMode('create')}
+            disabled={isLoading}
+            className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono rounded-md transition-all ${
+              mode === 'create'
+                ? 'bg-primary text-primary-foreground'
+                : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+            }`}
+          >
+            <Plus className="w-3 h-3" />
+            create room
+          </button>
+          <button
+            type="button"
+            onClick={() => switchMode('join')}
+            disabled={isLoading}
+            className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono rounded-md transition-all ${
+              mode === 'join'
+                ? 'bg-primary text-primary-foreground'
+                : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+            }`}
+          >
+            <LogIn className="w-3 h-3" />
+            join room
+          </button>
         </motion.div>
 
         <AnimatePresence>
@@ -208,7 +288,7 @@ export function JoinScreen({ onJoin }: JoinScreenProps) {
           )}
         </AnimatePresence>
 
-        {/* Username field */}
+        {/* Username */}
         <motion.div
           className="space-y-1.5"
           initial={{ opacity: 0, y: 12 }}
@@ -228,7 +308,7 @@ export function JoinScreen({ onJoin }: JoinScreenProps) {
           />
         </motion.div>
 
-        {/* Room code field */}
+        {/* Room code */}
         <motion.div
           className="space-y-1.5"
           initial={{ opacity: 0, y: 12 }}
@@ -240,8 +320,8 @@ export function JoinScreen({ onJoin }: JoinScreenProps) {
             <input
               type="text"
               value={roomName}
-              onChange={(e) => { setRoomName(e.target.value); setNeedsPassword(false); setJoinPassword(''); setRoomTaken(false); }}
-              placeholder="any code creates a room"
+              onChange={(e) => { setRoomName(e.target.value); setNeedsPassword(false); setJoinPassword(''); setRoomTaken(false); setError(null); }}
+              placeholder={mode === 'create' ? 'choose a room code' : 'enter room code'}
               className={`w-full bg-input rounded-md py-2.5 px-3 text-sm text-transparent placeholder:text-muted-foreground outline-none focus:ring-1 transition-colors font-mono caret-foreground selection:bg-foreground/20 selection:text-transparent ${roomTaken ? 'ring-2 ring-destructive focus:ring-destructive' : 'focus:ring-ring'}`}
               maxLength={30}
               required
@@ -267,14 +347,14 @@ export function JoinScreen({ onJoin }: JoinScreenProps) {
           </div>
         </motion.div>
 
-        {/* Password protect toggle */}
+        {/* Create mode: password protect toggle */}
         <AnimatePresence>
-          {!needsPassword && (
+          {mode === 'create' && (
             <motion.div
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.4, delay: 0.6 }}
+              transition={{ duration: 0.3 }}
               className="space-y-3"
             >
               <div className="flex items-center justify-between">
@@ -317,9 +397,9 @@ export function JoinScreen({ onJoin }: JoinScreenProps) {
           )}
         </AnimatePresence>
 
-        {/* Password prompt when joining a protected room */}
+        {/* Join mode: password prompt */}
         <AnimatePresence>
-          {needsPassword && (
+          {mode === 'join' && needsPassword && (
             <motion.div
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
@@ -346,7 +426,7 @@ export function JoinScreen({ onJoin }: JoinScreenProps) {
           )}
         </AnimatePresence>
 
-        {/* Join button */}
+        {/* Submit */}
         <motion.div
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
@@ -354,19 +434,24 @@ export function JoinScreen({ onJoin }: JoinScreenProps) {
         >
           <motion.button
             type="submit"
-            disabled={!username.trim() || !roomName.trim() || isLoading || (passwordProtect && !roomPassword.trim()) || (needsPassword && !joinPassword.trim())}
+            disabled={isSubmitDisabled}
             className="w-full bg-primary text-primary-foreground font-medium py-2.5 rounded-md flex items-center justify-center gap-2 hover:opacity-90 transition-all disabled:opacity-20 disabled:cursor-not-allowed font-mono relative join-button-glow"
             whileTap={{ scale: 0.95 }}
           >
             {isLoading ? (
               <>
                 <Loader2 className="w-4 h-4 animate-spin" />
-                {checkingRoom ? 'checking...' : 'entering...'}
+                {checkingRoom ? 'checking...' : mode === 'create' ? 'creating...' : 'joining...'}
               </>
-            ) : needsPassword ? (
+            ) : mode === 'join' && needsPassword ? (
               <>
                 <Lock className="w-4 h-4" />
                 unlock
+              </>
+            ) : mode === 'create' ? (
+              <>
+                <Plus className="w-4 h-4" />
+                create
               </>
             ) : (
               <>
