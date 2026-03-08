@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { GifPicker } from '@/components/GifPicker';
 import { FullscreenImageViewer } from '@/components/FullscreenImageViewer';
 import { ChatMessage, ReplyTo } from '@/types/chat';
-import { MessageBubble } from '@/components/chat/MessageBubble';
+import { MessageBubble, MessageGroupInfo } from '@/components/chat/MessageBubble';
 import { FileInspector, InspectedFile } from '@/components/chat/FileInspector';
 import { ReplyPreview } from '@/components/chat/ReplyPreview';
 import { ACCEPTED_FILE_TYPES } from '@/components/chat/FileHelpers';
