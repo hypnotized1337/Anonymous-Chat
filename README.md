@@ -6,6 +6,14 @@ A minimalist, account-free, ephemeral chat application. No sign-ups, no tracking
 
 ---
 
+## Preview
+
+| Join Screen | Chat View |
+|:-----------:|:---------:|
+| ![Join Screen](public/screenshots/join-screen.png) | ![Chat View](public/screenshots/chat-view.png) |
+
+---
+
 ## Features
 
 ### 💀 Ephemeral by Design
