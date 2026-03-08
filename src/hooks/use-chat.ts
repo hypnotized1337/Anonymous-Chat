@@ -160,248 +160,277 @@ export function useChat() {
 
   // No longer needed — duplicate check is done post-join inside joinRoom
 
-  const joinRoom = useCallback((username: string, roomCode: string) => {
-    if (channelRef.current) {
-      supabase.removeChannel(channelRef.current);
-    }
-
-    const systemMsg: ChatMessage = {
-      id: generateId(),
-      username: 'system',
-      text: `${username} joined.`,
-      timestamp: Date.now(),
-      type: 'system',
-    };
-
-    setState(prev => ({
-      ...prev,
-      username,
-      roomCode,
-      isJoined: true,
-      messages: [systemMsg],
-      users: [],
-      typingUsers: [],
-      frozen: false,
-      frozenBy: null,
-    }));
-
-    const channel = supabase.channel(`room:${roomCode}`, {
-      config: { presence: { key: username } },
-    });
-
-    channel.on('broadcast', { event: 'message' }, (payload) => {
-      const msg = safeParse(ChatMessageSchema, payload.payload);
-      if (!msg) return;
-      if (msg.username === usernameRef.current) return;
-
-      const isFocused = document.hasFocus();
-      setState(prev => ({
-        ...prev,
-        messages: [...prev.messages, { ...msg, status: isFocused ? 'read' : 'delivered' } as ChatMessage],
-      }));
-
-      if (isFocused && channelRef.current) {
-        channelRef.current.send({ type: 'broadcast', event: 'read', payload: { messageId: msg.id, reader: usernameRef.current } });
+  const joinRoom = useCallback((username: string, roomCode: string, skipDuplicateCheck = false): Promise<{ error: string | null }> => {
+    return new Promise((resolveJoin) => {
+      if (channelRef.current) {
+        supabase.removeChannel(channelRef.current);
       }
 
-      if (notificationsRef.current && document.hidden) {
-        new Notification(msg.username, { body: msg.text });
-      }
-    });
-
-    channel.on('broadcast', { event: 'system' }, (payload) => {
-      const msg = safeParse(ChatMessageSchema, payload.payload);
-      if (!msg) return;
-      setState(prev => ({ ...prev, messages: [...prev.messages, msg as ChatMessage] }));
-    });
-
-    channel.on('broadcast', { event: 'announcement' }, (payload) => {
-      const msg = safeParse(ChatMessageSchema, payload.payload);
-      if (!msg) return;
-      setState(prev => ({ ...prev, messages: [...prev.messages, msg as ChatMessage] }));
-    });
-
-    channel.on('broadcast', { event: 'typing' }, (payload) => {
-      const parsed = safeParse(TypingSchema, payload.payload);
-      if (!parsed) return;
-      const typingUser = parsed.username;
-      if (typingUser === usernameRef.current) return;
-
-      setState(prev => ({
-        ...prev,
-        typingUsers: prev.typingUsers.includes(typingUser) ? prev.typingUsers : [...prev.typingUsers, typingUser],
-      }));
-
-      if (remoteTypingTimeouts.current[typingUser]) clearTimeout(remoteTypingTimeouts.current[typingUser]);
-      remoteTypingTimeouts.current[typingUser] = setTimeout(() => {
-        setState(prev => ({ ...prev, typingUsers: prev.typingUsers.filter(u => u !== typingUser) }));
-        delete remoteTypingTimeouts.current[typingUser];
-      }, 3000);
-    });
-
-    channel.on('broadcast', { event: 'read' }, (payload) => {
-      const parsed = safeParse(ReadSchema, payload.payload);
-      if (!parsed) return;
-      setState(prev => ({
-        ...prev,
-        messages: prev.messages.map(m => m.id === parsed.messageId ? { ...m, status: 'read' } : m),
-      }));
-    });
-
-    channel.on('broadcast', { event: 'bulk-read' }, (payload) => {
-      const parsed = safeParse(BulkReadSchema, payload.payload);
-      if (!parsed) return;
-      setState(prev => ({
-        ...prev,
-        messages: prev.messages.map(m =>
-          parsed.messageIds.includes(m.id) ? { ...m, status: 'read' } : m
-        ),
-      }));
-    });
-
-    channel.on('broadcast', { event: 'nuke' }, () => {
-      setState(prev => ({
-        ...prev,
-        messages: [{
-          id: generateId(),
-          username: 'system',
-          text: 'Session purged.',
-          timestamp: Date.now(),
-          type: 'system',
-        }],
-      }));
-    });
-
-    channel.on('broadcast', { event: 'freeze' }, (payload) => {
-      const parsed = safeParse(FreezeSchema, payload.payload);
-      if (!parsed) return;
-      setState(prev => ({ ...prev, frozen: parsed.frozen, frozenBy: parsed.frozen ? parsed.by : null }));
-    });
-
-    channel.on('broadcast', { event: 'edit' }, (payload) => {
-      const parsed = safeParse(EditSchema, payload.payload);
-      if (!parsed) return;
-      setState(prev => ({
-        ...prev,
-        messages: prev.messages.map(m => m.id === parsed.messageId ? { ...m, text: parsed.newText, edited: true } : m),
-      }));
-    });
-
-    channel.on('broadcast', { event: 'unsend' }, (payload) => {
-      const parsed = safeParse(UnsendSchema, payload.payload);
-      if (!parsed) return;
-      setState(prev => ({
-        ...prev,
-        messages: prev.messages.map(m => m.id === parsed.messageId ? { ...m, text: '', deleted: true } : m),
-      }));
-    });
-
-    channel.on('broadcast', { event: 'screenshot' }, (payload) => {
-      const parsed = safeParse(ScreenshotSchema, payload.payload);
-      if (!parsed || parsed.username === usernameRef.current) return;
-      const alertMsg: ChatMessage = {
+      const systemMsg: ChatMessage = {
         id: generateId(),
         username: 'system',
-        text: `⚠ ${parsed.username} took a screenshot`,
+        text: `${username} joined.`,
         timestamp: Date.now(),
         type: 'system',
       };
-      setState(prev => ({ ...prev, messages: [...prev.messages, alertMsg] }));
-    });
 
-    // Kick event
-    channel.on('broadcast', { event: 'kick' }, (payload) => {
-      const parsed = safeParse(KickSchema, payload.payload);
-      if (!parsed) return;
-      if (parsed.username === usernameRef.current) {
-        // We are being kicked — untrack presence first
-        if (channelRef.current) {
-          channelRef.current.untrack().then(() => {
-            if (channelRef.current) {
-              supabase.removeChannel(channelRef.current);
-              channelRef.current = null;
-            }
-          });
-        }
+      setState(prev => ({
+        ...prev,
+        username,
+        roomCode,
+        isJoined: true,
+        messages: [systemMsg],
+        users: [],
+        typingUsers: [],
+        frozen: false,
+        frozenBy: null,
+      }));
+
+      const channel = supabase.channel(`room:${roomCode}`, {
+        config: { presence: { key: username } },
+      });
+
+      let duplicateChecked = false;
+
+      channel.on('broadcast', { event: 'message' }, (payload) => {
+        const msg = safeParse(ChatMessageSchema, payload.payload);
+        if (!msg) return;
+        if (msg.username === usernameRef.current) return;
+
+        const isFocused = document.hasFocus();
         setState(prev => ({
           ...prev,
-          isJoined: false,
-          messages: [],
-          users: [],
-          username: '',
-          roomCode: '',
-          typingUsers: [],
-          frozen: false,
-          frozenBy: null,
+          messages: [...prev.messages, { ...msg, status: isFocused ? 'read' : 'delivered' } as ChatMessage],
         }));
-        setTimeout(() => {
-          toast.error('YOU HAVE BEEN REMOVED', {
-            description: 'An admin removed you from the void.',
-            duration: 5000,
-          });
-        }, 100);
-      } else {
-        // Someone else was kicked — show system message
+
+        if (isFocused && channelRef.current) {
+          channelRef.current.send({ type: 'broadcast', event: 'read', payload: { messageId: msg.id, reader: usernameRef.current } });
+        }
+
+        if (notificationsRef.current && document.hidden) {
+          new Notification(msg.username, { body: msg.text });
+        }
+      });
+
+      channel.on('broadcast', { event: 'system' }, (payload) => {
+        const msg = safeParse(ChatMessageSchema, payload.payload);
+        if (!msg) return;
+        setState(prev => ({ ...prev, messages: [...prev.messages, msg as ChatMessage] }));
+      });
+
+      channel.on('broadcast', { event: 'announcement' }, (payload) => {
+        const msg = safeParse(ChatMessageSchema, payload.payload);
+        if (!msg) return;
+        setState(prev => ({ ...prev, messages: [...prev.messages, msg as ChatMessage] }));
+      });
+
+      channel.on('broadcast', { event: 'typing' }, (payload) => {
+        const parsed = safeParse(TypingSchema, payload.payload);
+        if (!parsed) return;
+        const typingUser = parsed.username;
+        if (typingUser === usernameRef.current) return;
+
         setState(prev => ({
           ...prev,
-          messages: [...prev.messages, {
+          typingUsers: prev.typingUsers.includes(typingUser) ? prev.typingUsers : [...prev.typingUsers, typingUser],
+        }));
+
+        if (remoteTypingTimeouts.current[typingUser]) clearTimeout(remoteTypingTimeouts.current[typingUser]);
+        remoteTypingTimeouts.current[typingUser] = setTimeout(() => {
+          setState(prev => ({ ...prev, typingUsers: prev.typingUsers.filter(u => u !== typingUser) }));
+          delete remoteTypingTimeouts.current[typingUser];
+        }, 3000);
+      });
+
+      channel.on('broadcast', { event: 'read' }, (payload) => {
+        const parsed = safeParse(ReadSchema, payload.payload);
+        if (!parsed) return;
+        setState(prev => ({
+          ...prev,
+          messages: prev.messages.map(m => m.id === parsed.messageId ? { ...m, status: 'read' } : m),
+        }));
+      });
+
+      channel.on('broadcast', { event: 'bulk-read' }, (payload) => {
+        const parsed = safeParse(BulkReadSchema, payload.payload);
+        if (!parsed) return;
+        setState(prev => ({
+          ...prev,
+          messages: prev.messages.map(m =>
+            parsed.messageIds.includes(m.id) ? { ...m, status: 'read' } : m
+          ),
+        }));
+      });
+
+      channel.on('broadcast', { event: 'nuke' }, () => {
+        setState(prev => ({
+          ...prev,
+          messages: [{
             id: generateId(),
             username: 'system',
-            text: `${parsed.username} was removed.`,
+            text: 'Session purged.',
             timestamp: Date.now(),
             type: 'system',
           }],
         }));
-      }
-    });
+      });
 
-    // Reaction event
-    channel.on('broadcast', { event: 'reaction' }, (payload) => {
-      const parsed = safeParse(ReactionSchema, payload.payload);
-      if (!parsed) return;
-      setState(prev => ({
-        ...prev,
-        messages: prev.messages.map(m => {
-          if (m.id !== parsed.messageId) return m;
-          const reactions = { ...(m.reactions || {}) };
-          const users = [...(reactions[parsed.emoji] || [])];
-          const idx = users.indexOf(parsed.username);
-          if (idx >= 0) {
-            users.splice(idx, 1);
-            if (users.length === 0) {
-              delete reactions[parsed.emoji];
-            } else {
-              reactions[parsed.emoji] = users;
-            }
-          } else {
-            reactions[parsed.emoji] = [...users, parsed.username];
+      channel.on('broadcast', { event: 'freeze' }, (payload) => {
+        const parsed = safeParse(FreezeSchema, payload.payload);
+        if (!parsed) return;
+        setState(prev => ({ ...prev, frozen: parsed.frozen, frozenBy: parsed.frozen ? parsed.by : null }));
+      });
+
+      channel.on('broadcast', { event: 'edit' }, (payload) => {
+        const parsed = safeParse(EditSchema, payload.payload);
+        if (!parsed) return;
+        setState(prev => ({
+          ...prev,
+          messages: prev.messages.map(m => m.id === parsed.messageId ? { ...m, text: parsed.newText, edited: true } : m),
+        }));
+      });
+
+      channel.on('broadcast', { event: 'unsend' }, (payload) => {
+        const parsed = safeParse(UnsendSchema, payload.payload);
+        if (!parsed) return;
+        setState(prev => ({
+          ...prev,
+          messages: prev.messages.map(m => m.id === parsed.messageId ? { ...m, text: '', deleted: true } : m),
+        }));
+      });
+
+      channel.on('broadcast', { event: 'screenshot' }, (payload) => {
+        const parsed = safeParse(ScreenshotSchema, payload.payload);
+        if (!parsed || parsed.username === usernameRef.current) return;
+        const alertMsg: ChatMessage = {
+          id: generateId(),
+          username: 'system',
+          text: `⚠ ${parsed.username} took a screenshot`,
+          timestamp: Date.now(),
+          type: 'system',
+        };
+        setState(prev => ({ ...prev, messages: [...prev.messages, alertMsg] }));
+      });
+
+      channel.on('broadcast', { event: 'kick' }, (payload) => {
+        const parsed = safeParse(KickSchema, payload.payload);
+        if (!parsed) return;
+        if (parsed.username === usernameRef.current) {
+          if (channelRef.current) {
+            channelRef.current.untrack().then(() => {
+              if (channelRef.current) {
+                supabase.removeChannel(channelRef.current);
+                channelRef.current = null;
+              }
+            });
           }
-          return { ...m, reactions: Object.keys(reactions).length > 0 ? reactions : undefined };
-        }),
-      }));
+          setState(prev => ({
+            ...prev,
+            isJoined: false,
+            messages: [],
+            users: [],
+            username: '',
+            roomCode: '',
+            typingUsers: [],
+            frozen: false,
+            frozenBy: null,
+          }));
+          setTimeout(() => {
+            toast.error('YOU HAVE BEEN REMOVED', {
+              description: 'An admin removed you from the void.',
+              duration: 5000,
+            });
+          }, 100);
+        } else {
+          setState(prev => ({
+            ...prev,
+            messages: [...prev.messages, {
+              id: generateId(),
+              username: 'system',
+              text: `${parsed.username} was removed.`,
+              timestamp: Date.now(),
+              type: 'system',
+            }],
+          }));
+        }
+      });
+
+      channel.on('broadcast', { event: 'reaction' }, (payload) => {
+        const parsed = safeParse(ReactionSchema, payload.payload);
+        if (!parsed) return;
+        setState(prev => ({
+          ...prev,
+          messages: prev.messages.map(m => {
+            if (m.id !== parsed.messageId) return m;
+            const reactions = { ...(m.reactions || {}) };
+            const users = [...(reactions[parsed.emoji] || [])];
+            const idx = users.indexOf(parsed.username);
+            if (idx >= 0) {
+              users.splice(idx, 1);
+              if (users.length === 0) {
+                delete reactions[parsed.emoji];
+              } else {
+                reactions[parsed.emoji] = users;
+              }
+            } else {
+              reactions[parsed.emoji] = [...users, parsed.username];
+            }
+            return { ...m, reactions: Object.keys(reactions).length > 0 ? reactions : undefined };
+          }),
+        }));
+      });
+
+      channel.on('presence', { event: 'sync' }, () => {
+        const presenceState = channel.presenceState();
+        const users: RoomUser[] = Object.keys(presenceState).map(key => ({
+          username: key,
+          joinedAt: (presenceState[key]?.[0] as any)?.joinedAt ?? Date.now(),
+        }));
+        setState(prev => ({ ...prev, users }));
+
+        if (users.length === 0) {
+          setState(prev => ({ ...prev, messages: [] }));
+        }
+
+        // Post-join duplicate check: if the presence key has multiple entries, someone else has this username
+        if (!duplicateChecked && !skipDuplicateCheck) {
+          duplicateChecked = true;
+          const entries = presenceState[username];
+          if (entries && entries.length > 1) {
+            // Duplicate detected — leave immediately
+            channel.untrack().then(() => supabase.removeChannel(channel)).catch(() => supabase.removeChannel(channel));
+            channelRef.current = null;
+            setState(prev => ({
+              ...prev,
+              isJoined: false,
+              messages: [],
+              users: [],
+              username: '',
+              roomCode: '',
+              typingUsers: [],
+              frozen: false,
+              frozenBy: null,
+            }));
+            resolveJoin({ error: 'Username already active in this void. Please choose another identity.' });
+            return;
+          }
+          resolveJoin({ error: null });
+        }
+      });
+
+      channel.subscribe(async (status) => {
+        if (status === 'SUBSCRIBED') {
+          await channel.track({ username, joinedAt: Date.now() });
+          channel.send({ type: 'broadcast', event: 'system', payload: systemMsg });
+          // If skipping duplicate check, resolve immediately
+          if (skipDuplicateCheck) {
+            resolveJoin({ error: null });
+          }
+        }
+      });
+
+      channelRef.current = channel;
     });
-
-    channel.on('presence', { event: 'sync' }, () => {
-      const presenceState = channel.presenceState();
-      const users: RoomUser[] = Object.keys(presenceState).map(key => ({
-        username: key,
-        joinedAt: (presenceState[key]?.[0] as any)?.joinedAt ?? Date.now(),
-      }));
-      setState(prev => ({ ...prev, users }));
-
-      if (users.length === 0) {
-        setState(prev => ({ ...prev, messages: [] }));
-      }
-    });
-
-    channel.subscribe(async (status) => {
-      if (status === 'SUBSCRIBED') {
-        await channel.track({ username, joinedAt: Date.now() });
-        channel.send({ type: 'broadcast', event: 'system', payload: systemMsg });
-      }
-    });
-
-    channelRef.current = channel;
   }, []);
 
   const leaveRoom = useCallback(() => {
