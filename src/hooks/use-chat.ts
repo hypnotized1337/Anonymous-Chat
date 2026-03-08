@@ -231,27 +231,38 @@ export function useChat() {
         }
 
         if (notificationsRef.current && document.hidden) {
-          let body: string;
-          if (msg.isGif) {
-            body = `${msg.username} sent a GIF`;
-          } else if (msg.imageUrl) {
-            body = `${msg.username} sent a photo 📷`;
-          } else if (msg.fileUrl) {
-            body = `${msg.username} sent a file: ${msg.fileName || 'attachment'}`;
-          } else if (msg.replyTo) {
-          } else if (msg.replyTo) {
-            const replyText = msg.text ? `"${msg.text.slice(0, 80)}"` : '';
-            body = `${msg.username} replied to ${msg.replyTo.username}: ${replyText}`;
-          } else if (msg.text) {
-            const truncated = msg.text.length > 100 ? msg.text.slice(0, 100) + '…' : msg.text;
-            body = `${msg.username} said: "${truncated}"`;
+          if (notifCooldownRef.current) {
+            pendingNotifCount.current++;
           } else {
-            body = `${msg.username} sent a message`;
+            let body: string;
+            if (msg.isGif) {
+              body = `${msg.username} sent a GIF`;
+            } else if (msg.imageUrl) {
+              body = `${msg.username} sent a photo 📷`;
+            } else if (msg.fileUrl) {
+              body = `${msg.username} sent a file: ${msg.fileName || 'attachment'}`;
+            } else if (msg.replyTo) {
+              const replyText = msg.text ? `"${msg.text.slice(0, 80)}"` : '';
+              body = `${msg.username} replied to ${msg.replyTo.username}: ${replyText}`;
+            } else if (msg.text) {
+              const truncated = msg.text.length > 100 ? msg.text.slice(0, 100) + '…' : msg.text;
+              body = `${msg.username} said: "${truncated}"`;
+            } else {
+              body = `${msg.username} sent a message`;
+            }
+            new Notification(state.roomCode, { body, icon: '/favicon.ico' });
+
+            notifCooldownRef.current = window.setTimeout(() => {
+              if (pendingNotifCount.current > 0) {
+                new Notification(state.roomCode, {
+                  body: `+ ${pendingNotifCount.current} more message${pendingNotifCount.current > 1 ? 's' : ''}`,
+                  icon: '/favicon.ico',
+                });
+                pendingNotifCount.current = 0;
+              }
+              notifCooldownRef.current = null;
+            }, 3000);
           }
-          new Notification(state.roomCode, {
-            body,
-            icon: '/favicon.ico',
-          });
         }
       });
 
