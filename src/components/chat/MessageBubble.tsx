@@ -283,12 +283,23 @@ export const MessageBubble = memo(function MessageBubble({
       custom={index}
       className={groupInfo.isFirstInGroup ? 'mt-2' : 'mt-0.5'}
     >
-      <ContextMenu>
-        <ContextMenuTrigger asChild>
-          <div className={`flex ${isOwn ? 'justify-end' : 'justify-start'}`}>{bubble}</div>
-        </ContextMenuTrigger>
-        {contextMenuItems}
-      </ContextMenu>
+      <TooltipProvider delayDuration={400}>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <div>
+              <ContextMenu>
+                <ContextMenuTrigger asChild>
+                  <div className={`flex ${isOwn ? 'justify-end' : 'justify-start'}`}>{bubble}</div>
+                </ContextMenuTrigger>
+                {contextMenuItems}
+              </ContextMenu>
+            </div>
+          </TooltipTrigger>
+          <TooltipContent side={isOwn ? 'left' : 'right'} className="text-[10px] font-mono px-2 py-1">
+            {formatTime(msg.timestamp)}
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
     </motion.div>
   );
 });
