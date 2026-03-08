@@ -16,6 +16,16 @@ const Index = () => {
   const [adminOpen, setAdminOpen] = useState(false);
   const [authOverlay, setAuthOverlay] = useState(false);
   const [nuking, setNuking] = useState(false);
+  const [uiScale, setUiScale] = useState(() => {
+    const saved = localStorage.getItem('v0id-ui-scale');
+    return saved ? Number(saved) : 70;
+  });
+
+  const handleScaleChange = useCallback((val: number[]) => {
+    const s = val[0];
+    setUiScale(s);
+    localStorage.setItem('v0id-ui-scale', String(s));
+  }, []);
 
   useScreenshotDetect(broadcastScreenshot, state.isJoined);
 
@@ -53,7 +63,7 @@ const Index = () => {
   }
 
   return (
-    <div className="flex h-screen w-full overflow-hidden">
+    <div className="flex h-screen w-screen overflow-hidden" style={{ zoom: uiScale / 100 }}>
       <ChatSidebar
         roomCode={state.roomCode}
         users={state.users}
@@ -68,6 +78,8 @@ const Index = () => {
         frozen={state.frozen}
         frozenBy={state.frozenBy}
         nuking={nuking}
+        uiScale={uiScale}
+        onScaleChange={handleScaleChange}
         onSend={handleSend}
         onTyping={sendTyping}
         onToggleNotifications={toggleNotifications}

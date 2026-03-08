@@ -20,6 +20,8 @@ interface ChatAreaProps {
   frozen: boolean;
   frozenBy: string | null;
   nuking: boolean;
+  uiScale: number;
+  onScaleChange: (val: number[]) => void;
   onSend: (text: string, replyTo?: ReplyTo) => void;
   onTyping: () => void;
   onToggleNotifications: () => void;
@@ -40,6 +42,8 @@ export function ChatArea({
   frozen,
   frozenBy,
   nuking,
+  uiScale,
+  onScaleChange,
   onSend,
   onTyping,
   onToggleNotifications,
@@ -64,16 +68,6 @@ export function ChatArea({
   const [inspectedFile, setInspectedFile] = useState<InspectedFile | null>(null);
   const [replyingTo, setReplyingTo] = useState<ReplyTo | null>(null);
   const [currentTime, setCurrentTime] = useState(Date.now());
-  const [uiScale, setUiScale] = useState(() => {
-    const saved = localStorage.getItem('v0id-ui-scale');
-    return saved ? Number(saved) : 50;
-  });
-
-  const handleScaleChange = useCallback((val: number[]) => {
-    const s = val[0];
-    setUiScale(s);
-    localStorage.setItem('v0id-ui-scale', String(s));
-  }, []);
 
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const endRef = useRef<HTMLDivElement>(null);
@@ -202,7 +196,6 @@ export function ChatArea({
   return (
     <div
       className="flex-1 flex flex-col h-screen min-w-0 relative"
-      style={{ zoom: uiScale / 100 }}
       onDragEnter={handleDragEnter}
       onDragLeave={handleDragLeave}
       onDragOver={handleDragOver}
@@ -234,8 +227,8 @@ export function ChatArea({
                 </div>
                 <Slider
                   value={[uiScale]}
-                  onValueChange={handleScaleChange}
-                  min={50}
+                  onValueChange={onScaleChange}
+                  min={70}
                   max={150}
                   step={5}
                 />
