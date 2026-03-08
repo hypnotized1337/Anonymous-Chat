@@ -127,6 +127,10 @@ export function ChatArea({
     const newCount = messages.length;
     if (newCount > lastMessageCountRef.current) {
       if (checkIfScrolledUp() && userScrolledRef.current) {
+        const newMsgs = messages.slice(lastMessageCountRef.current);
+        if (newMsgs.length > 0 && !unreadMarkerId) {
+          setUnreadMarkerId(newMsgs[0].id);
+        }
         setUnreadCount(prev => prev + (newCount - lastMessageCountRef.current));
       } else {
         scrollToBottom(false);
