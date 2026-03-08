@@ -279,7 +279,7 @@ export const MessageBubble = memo(function MessageBubble({
       initial="hidden"
       animate="visible"
       custom={index}
-      className={!groupInfo.isFirstInGroup ? '-mt-1' : ''}
+      className={groupInfo.isFirstInGroup ? 'mt-2' : 'mt-0.5'}
     >
       <ContextMenu>
         <ContextMenuTrigger asChild>

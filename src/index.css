@@ -121,18 +121,62 @@
   background-size: 256px 256px;
 }
 
-/* Glitch text effect */
+/* TV static glitch effect */
 .glitch-text {
-  animation: glitch-flicker 0.2s linear;
+  animation: glitch-static 0.3s steps(2, end);
+  position: relative;
 }
 
-@keyframes glitch-flicker {
-  0% { opacity: 1; transform: translate(0); }
-  20% { opacity: 0.8; transform: translate(-2px, 1px); }
-  40% { opacity: 1; transform: translate(1px, -1px); }
-  60% { opacity: 0.7; transform: translate(-1px, 0); }
-  80% { opacity: 1; transform: translate(2px, 1px); }
-  100% { opacity: 1; transform: translate(0); }
+.glitch-text::before,
+.glitch-text::after {
+  content: 'v0id';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.glitch-text::before {
+  animation: glitch-clip-1 0.3s steps(3, end);
+  clip-path: inset(20% 0 40% 0);
+  color: hsl(var(--foreground));
+  text-shadow: -2px 0 hsl(var(--foreground) / 0.7);
+}
+
+.glitch-text::after {
+  animation: glitch-clip-2 0.3s steps(3, end);
+  clip-path: inset(60% 0 10% 0);
+  color: hsl(var(--foreground));
+  text-shadow: 2px 0 hsl(var(--foreground) / 0.7);
+}
+
+@keyframes glitch-static {
+  0% { transform: translate(0); opacity: 1; }
+  10% { transform: translate(-2px, 1px); opacity: 0.85; }
+  20% { transform: translate(2px, -1px); opacity: 1; }
+  30% { transform: translate(0, 2px); opacity: 0.9; }
+  40% { transform: translate(-1px, -2px); opacity: 0.7; }
+  50% { transform: translate(3px, 0); opacity: 1; }
+  60% { transform: translate(-3px, 1px); opacity: 0.8; }
+  70% { transform: translate(0); opacity: 0.95; }
+  80% { transform: translate(1px, -1px); opacity: 0.85; }
+  90% { transform: translate(-1px, 2px); opacity: 1; }
+  100% { transform: translate(0); opacity: 1; }
+}
+
+@keyframes glitch-clip-1 {
+  0% { clip-path: inset(20% 0 40% 0); transform: translate(-3px, 0); }
+  33% { clip-path: inset(50% 0 10% 0); transform: translate(2px, 0); }
+  66% { clip-path: inset(10% 0 60% 0); transform: translate(-1px, 0); }
+  100% { clip-path: inset(20% 0 40% 0); transform: translate(0); }
+}
+
+@keyframes glitch-clip-2 {
+  0% { clip-path: inset(60% 0 10% 0); transform: translate(3px, 0); }
+  33% { clip-path: inset(10% 0 50% 0); transform: translate(-2px, 0); }
+  66% { clip-path: inset(40% 0 20% 0); transform: translate(1px, 0); }
+  100% { clip-path: inset(60% 0 10% 0); transform: translate(0); }
 }
 
 /* Join button breathing glow */

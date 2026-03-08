@@ -258,7 +258,7 @@ export function ChatArea({
       )}
 
       {/* Messages */}
-      <div ref={scrollContainerRef} className="flex-1 overflow-y-auto scrollbar-thin p-4 space-y-2 relative">
+      <div ref={scrollContainerRef} className="flex-1 overflow-y-auto scrollbar-thin p-4 relative">
         {/* Empty state */}
         {!nuking && messages.length === 0 && (
           <motion.div
