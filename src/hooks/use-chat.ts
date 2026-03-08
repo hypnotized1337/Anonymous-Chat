@@ -51,6 +51,7 @@ const ChatMessageSchema = z.object({
   deleted: z.boolean().optional(),
   imageUrl: z.string().url().max(2000).optional(),
   imageExpiry: z.number().optional(),
+  isGif: z.boolean().optional(),
   fileUrl: z.string().url().max(2000).optional(),
   fileName: z.string().max(255).optional(),
   fileSize: z.number().optional(),
