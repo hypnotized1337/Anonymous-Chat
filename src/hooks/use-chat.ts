@@ -384,12 +384,11 @@ export function useChat() {
 
   const toggleNotifications = useCallback(async () => {
     if (!state.notificationsEnabled) {
-      if ('Notification' in window) {
-        const perm = await Notification.requestPermission();
-        if (perm === 'granted') {
-          localStorage.setItem('chat_notif_pref', 'true');
-          setState(prev => ({ ...prev, notificationsEnabled: true }));
-        }
+      // Always enable the preference; request permission separately
+      localStorage.setItem('chat_notif_pref', 'true');
+      setState(prev => ({ ...prev, notificationsEnabled: true }));
+      if ('Notification' in window && Notification.permission === 'default') {
+        Notification.requestPermission();
       }
     } else {
       localStorage.setItem('chat_notif_pref', 'false');
