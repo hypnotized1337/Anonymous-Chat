@@ -525,6 +525,10 @@ export function useChat() {
           // Resolve after a delay to allow presence sync with duplicate info
           if (skipDuplicateCheck) {
             channel.send({ type: 'broadcast', event: 'system', payload: systemMsg });
+            // Request history from existing users after a short delay
+            setTimeout(() => {
+              channel.send({ type: 'broadcast', event: 'request-history', payload: {} });
+            }, 500);
             resolveJoin({ error: null });
           } else {
             setTimeout(() => {
@@ -532,6 +536,10 @@ export function useChat() {
                 duplicateChecked = true;
                 // Only broadcast join after confirming no duplicate
                 channel.send({ type: 'broadcast', event: 'system', payload: systemMsg });
+                // Request history from existing users
+                setTimeout(() => {
+                  channel.send({ type: 'broadcast', event: 'request-history', payload: {} });
+                }, 500);
                 resolveJoin({ error: null });
               }
             }, 1500);
