@@ -464,18 +464,25 @@ export function ChatArea({
                     <span className="text-[11px] italic text-muted-foreground">Image expired</span>
                   )}
                   {/* File attachment (non-image) */}
-                  {hasFile && !isFileImageOrGif && (
-                    <button
-                      onClick={() => setInspectedFile({ name: msg.fileName!, size: msg.fileSize, url: msg.fileUrl! })}
-                      className="flex items-center gap-2 p-2.5 bg-transparent border border-foreground hover:bg-foreground/10 transition-all active:scale-[0.95] mb-1 w-full"
-                    >
-                      <FileText className="w-4 h-4 text-foreground shrink-0" />
-                      <span className="text-xs font-mono text-foreground truncate flex-1 text-left">{msg.fileName}</span>
-                      {msg.fileSize !== undefined && (
-                        <span className="text-[10px] font-mono text-muted-foreground shrink-0">{formatFileSize(msg.fileSize)}</span>
-                      )}
-                    </button>
-                  )}
+                  {hasFile && !isFileImageOrGif && (() => {
+                    const IconComponent = getFileIcon(msg.fileMimeType, msg.fileName);
+                    return (
+                      <button
+                        onClick={() => setInspectedFile({ name: msg.fileName!, size: msg.fileSize, url: msg.fileUrl! })}
+                        className={`flex items-center gap-2 p-2.5 border transition-all active:scale-[0.95] mb-1 w-full ${
+                          isOwn
+                            ? 'border-message-own-foreground/30 hover:bg-message-own-foreground/10'
+                            : 'border-message-other-foreground/30 hover:bg-message-other-foreground/10'
+                        }`}
+                      >
+                        <IconComponent className={`w-4 h-4 shrink-0 ${isOwn ? 'text-message-own-foreground' : 'text-message-other-foreground'}`} />
+                        <span className={`text-xs font-mono truncate flex-1 text-left ${isOwn ? 'text-message-own-foreground' : 'text-message-other-foreground'}`}>{msg.fileName}</span>
+                        {msg.fileSize !== undefined && (
+                          <span className={`text-[10px] font-mono shrink-0 ${isOwn ? 'text-message-own-foreground/60' : 'text-message-other-foreground/60'}`}>{formatFileSize(msg.fileSize)}</span>
+                        )}
+                      </button>
+                    );
+                  })()}
                   {msg.text}
                 </div>
               )}
