@@ -8,6 +8,7 @@ interface ChatSidebarProps {
   users: RoomUser[];
   currentUser: string;
   onLeave: () => void;
+  className?: string;
 }
 
 function UserAvatar({ username, isYou }: { username: string; isYou: boolean }) {
