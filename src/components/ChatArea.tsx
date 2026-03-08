@@ -1,5 +1,7 @@
 import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
-import { Send, Bell, BellOff, LogOut, Plus, ChevronDown } from 'lucide-react';
+import { Send, Bell, BellOff, LogOut, Plus, ChevronDown, ZoomIn } from 'lucide-react';
+import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
+import { Slider } from '@/components/ui/slider';
 import { motion, AnimatePresence } from 'framer-motion';
 import { GifPicker } from '@/components/GifPicker';
 import { FullscreenImageViewer } from '@/components/FullscreenImageViewer';
