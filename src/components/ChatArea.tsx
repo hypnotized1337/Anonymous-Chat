@@ -1,15 +1,17 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
-import { Send, Bell, BellOff, LogOut, Plus, ChevronDown, ZoomIn } from 'lucide-react';
+import { Send, Bell, BellOff, LogOut, Plus, ChevronDown, ZoomIn, Users } from 'lucide-react';
 import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
 import { Slider } from '@/components/ui/slider';
+import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet';
 import { motion, AnimatePresence } from 'framer-motion';
 import { GifPicker } from '@/components/GifPicker';
 import { FullscreenImageViewer } from '@/components/FullscreenImageViewer';
-import { ChatMessage, ReplyTo } from '@/types/chat';
+import { ChatMessage, ReplyTo, RoomUser } from '@/types/chat';
 import { MessageBubble } from '@/components/chat/MessageBubble';
 import { FileInspector, InspectedFile } from '@/components/chat/FileInspector';
 import { ReplyPreview } from '@/components/chat/ReplyPreview';
 import { ACCEPTED_FILE_TYPES } from '@/components/chat/FileHelpers';
+import { ChatSidebar } from '@/components/ChatSidebar';
 
 interface ChatAreaProps {
   messages: ChatMessage[];
