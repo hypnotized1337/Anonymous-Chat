@@ -1,5 +1,7 @@
 import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
-import { Send, Bell, BellOff, LogOut, Plus, ChevronDown } from 'lucide-react';
+import { Send, Bell, BellOff, LogOut, Plus, ChevronDown, ZoomIn } from 'lucide-react';
+import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
+import { Slider } from '@/components/ui/slider';
 import { motion, AnimatePresence } from 'framer-motion';
 import { GifPicker } from '@/components/GifPicker';
 import { FullscreenImageViewer } from '@/components/FullscreenImageViewer';
@@ -62,6 +64,16 @@ export function ChatArea({
   const [inspectedFile, setInspectedFile] = useState<InspectedFile | null>(null);
   const [replyingTo, setReplyingTo] = useState<ReplyTo | null>(null);
   const [currentTime, setCurrentTime] = useState(Date.now());
+  const [uiScale, setUiScale] = useState(() => {
+    const saved = localStorage.getItem('v0id-ui-scale');
+    return saved ? Number(saved) : 100;
+  });
+
+  const handleScaleChange = useCallback((val: number[]) => {
+    const s = val[0];
+    setUiScale(s);
+    localStorage.setItem('v0id-ui-scale', String(s));
+  }, []);
 
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const endRef = useRef<HTMLDivElement>(null);
@@ -189,7 +201,8 @@ export function ChatArea({
 
   return (
     <div
-      className="flex-1 flex flex-col h-screen min-w-0 relative"
+      className="flex-1 flex flex-col h-screen min-w-0 relative origin-top-left"
+      style={{ transform: `scale(${uiScale / 100})`, width: `${10000 / uiScale}%`, height: `${10000 / uiScale}%` }}
       onDragEnter={handleDragEnter}
       onDragLeave={handleDragLeave}
       onDragOver={handleDragOver}
@@ -207,6 +220,28 @@ export function ChatArea({
           {currentUser}
         </span>
         <div className="flex items-center gap-1">
+          <Popover>
+            <PopoverTrigger asChild>
+              <button className="p-2 rounded-md text-muted-foreground hover:text-foreground transition-colors">
+                <ZoomIn className="w-4 h-4" />
+              </button>
+            </PopoverTrigger>
+            <PopoverContent className="w-48 p-3" side="bottom" align="end">
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-[11px] font-mono text-muted-foreground">Scale</span>
+                  <span className="text-[11px] font-mono text-foreground">{uiScale}%</span>
+                </div>
+                <Slider
+                  value={[uiScale]}
+                  onValueChange={handleScaleChange}
+                  min={50}
+                  max={150}
+                  step={5}
+                />
+              </div>
+            </PopoverContent>
+          </Popover>
           <motion.button
             onClick={handleNotificationToggle}
             animate={notificationJiggle ? {
