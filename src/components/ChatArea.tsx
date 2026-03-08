@@ -502,6 +502,7 @@ export function ChatArea({
             users={users}
             currentUser={currentUser}
             onLeave={() => { setMobileSidebarOpen(false); onLeave(); }}
+            className="flex"
           />
         </SheetContent>
       </Sheet>
