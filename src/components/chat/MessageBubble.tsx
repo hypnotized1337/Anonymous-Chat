@@ -159,7 +159,7 @@ export const MessageBubble = memo(function MessageBubble({
   };
 
   const bubble = (
-    <div className="max-w-[75%] space-y-0.5">
+    <div className={`max-w-[75%] space-y-0.5 ${isOwn ? 'items-end' : 'items-start'} flex flex-col`}>
       {showUsername && (
         <span className="text-[11px] text-muted-foreground ml-1">{msg.username}</span>
       )}
