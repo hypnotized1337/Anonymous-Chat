@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
-import { Send, Bell, BellOff, LogOut, Plus, Check, CheckCheck, ChevronDown, X, Download, FileText } from 'lucide-react';
+import { Send, Bell, BellOff, LogOut, Plus, Check, CheckCheck, ChevronDown, X, Download, FileText, FileArchive, FileType, File } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { GifPicker } from '@/components/GifPicker';
 import { FullscreenImageViewer } from '@/components/FullscreenImageViewer';
