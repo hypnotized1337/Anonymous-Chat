@@ -435,11 +435,14 @@ export function useChat() {
           // Don't broadcast join message yet — wait for duplicate check
           // Resolve after a delay to allow presence sync with duplicate info
           if (skipDuplicateCheck) {
+            channel.send({ type: 'broadcast', event: 'system', payload: systemMsg });
             resolveJoin({ error: null });
           } else {
             setTimeout(() => {
               if (!duplicateChecked) {
                 duplicateChecked = true;
+                // Only broadcast join after confirming no duplicate
+                channel.send({ type: 'broadcast', event: 'system', payload: systemMsg });
                 resolveJoin({ error: null });
               }
             }, 1500);
