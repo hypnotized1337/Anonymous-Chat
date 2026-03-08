@@ -404,19 +404,26 @@ export function ChatArea({
       <AnimatePresence>
         {isScrolledUp && (
           <motion.button
-            initial={{ opacity: 0, scale: 0.8, y: 10 }}
+            initial={{ opacity: 0, scale: 0.6, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.8, y: 10 }}
-            transition={{ type: 'spring', stiffness: 400, damping: 20 }}
+            exit={{ opacity: 0, scale: 0.6, y: 20 }}
+            transition={{ type: 'spring', stiffness: 500, damping: 25 }}
             onClick={() => scrollToBottom(true)}
-            className="absolute bottom-20 left-1/2 -translate-x-1/2 z-30 w-12 h-12 rounded-full bg-background border border-foreground flex items-center justify-center text-foreground hover:bg-foreground hover:text-background transition-colors active:scale-[0.95] shadow-lg"
+            className="absolute bottom-20 left-1/2 -translate-x-1/2 z-30 w-12 h-12 rounded-full bg-background border border-foreground flex items-center justify-center text-foreground hover:bg-foreground hover:text-background transition-colors active:scale-[0.95] shadow-lg backdrop-blur-sm"
             aria-label="Scroll to bottom"
+            whileHover={{ scale: 1.08 }}
+            whileTap={{ scale: 0.92 }}
           >
             <ChevronDown className="w-5 h-5" />
             {unreadCount > 0 && (
-              <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-foreground text-background text-[10px] font-mono font-bold flex items-center justify-center border border-background">
+              <motion.span
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ type: 'spring', stiffness: 600, damping: 15 }}
+                className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-foreground text-background text-[10px] font-mono font-bold flex items-center justify-center border border-background"
+              >
                 {unreadCount > 99 ? '99+' : unreadCount}
-              </span>
+              </motion.span>
             )}
           </motion.button>
         )}
