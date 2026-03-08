@@ -5,8 +5,6 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version',
 };
 
-const REPO = 'hypnotized1337/Anonymous-Chat';
-
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -17,11 +15,21 @@ Deno.serve(async (req) => {
     const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, serviceRoleKey);
 
-    // Fetch latest commit SHA from GitHub
-    const ghRes = await fetch(`https://api.github.com/repos/${REPO}/commits?per_page=1`);
-    if (!ghRes.ok) throw new Error(`GitHub API returned ${ghRes.status}`);
-    const [latestCommit] = await ghRes.json();
-    const latestSha = latestCommit.sha as string;
+    // Get latest SHA from cached commits
+    const { data: meta } = await supabase
+      .from('commits_cache_meta')
+      .select('latest_sha')
+      .limit(1)
+      .maybeSingle();
+
+    if (!meta) {
+      return new Response(JSON.stringify({ error: 'No cached commits available. Visit the changelog first.' }), {
+        status: 404,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    const latestSha = meta.latest_sha;
 
     // Check cache
     const { data: cached } = await supabase
@@ -36,11 +44,14 @@ Deno.serve(async (req) => {
       });
     }
 
-    // Fetch recent commit messages for context
-    const commitsRes = await fetch(`https://api.github.com/repos/${REPO}/commits?per_page=100`);
-    if (!commitsRes.ok) throw new Error(`GitHub API returned ${commitsRes.status}`);
-    const commits = await commitsRes.json();
-    const commitMessages = commits.map((c: any) => c.commit.message.split('\n')[0]).join('\n');
+    // Get commit messages from cache
+    const { data: commits } = await supabase
+      .from('cached_commits')
+      .select('message')
+      .order('author_date', { ascending: false })
+      .limit(100);
+
+    const commitMessages = (commits || []).map((c: any) => c.message.split('\n')[0]).join('\n');
 
     const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
     if (!LOVABLE_API_KEY) {
@@ -89,7 +100,6 @@ Deno.serve(async (req) => {
     const aiData = await aiRes.json();
     const summary = aiData.choices?.[0]?.message?.content || 'No summary generated.';
 
-    // Delete old rows and insert new cached summary
     await supabase.from('feature_summaries').delete().neq('latest_sha', latestSha);
     await supabase.from('feature_summaries').insert({ latest_sha: latestSha, summary });
 
