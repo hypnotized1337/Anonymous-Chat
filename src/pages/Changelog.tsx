@@ -36,17 +36,13 @@ export default function Changelog() {
   useEffect(() => {
     async function fetchAllCommits() {
       try {
-        const oneWeekAgo = new Date();
-        oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-        const since = oneWeekAgo.toISOString();
-
         let allData: Commit[] = [];
         let page = 1;
         let hasMore = true;
 
         while (hasMore) {
           const res = await fetch(
-            `https://api.github.com/repos/${REPO}/commits?per_page=100&page=${page}&since=${since}`
+            `https://api.github.com/repos/${REPO}/commits?per_page=100&page=${page}`
           );
           if (!res.ok) throw new Error(`GitHub API returned ${res.status}`);
           const data: Commit[] = await res.json();
