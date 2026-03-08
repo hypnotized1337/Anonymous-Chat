@@ -180,7 +180,7 @@ export function useChat() {
     return () => window.removeEventListener('focus', handleFocus);
   }, []);
 
-  // No longer needed — duplicate check is done post-join inside joinRoom
+  
 
   const joinRoom = useCallback((username: string, roomCode: string, skipDuplicateCheck = false): Promise<{ error: string | null }> => {
     return new Promise((resolveJoin) => {
