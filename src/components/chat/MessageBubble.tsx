@@ -240,30 +240,6 @@ export const MessageBubble = memo(function MessageBubble({
         </div>
       )}
 
-      {hasReactions && (
-        <div className="flex flex-wrap gap-1 ml-1 mt-0.5">
-          {Object.entries(reactions).map(([emoji, users]) => (
-            <motion.button
-              key={emoji}
-              onClick={() => onReact(msg.id, emoji)}
-              whileTap={{ scale: 1.4, rotate: 8 }}
-              whileHover={{ scale: 1.1 }}
-              initial={{ scale: 0, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ type: 'spring', stiffness: 500, damping: 20 }}
-              className={`inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[11px] border transition-colors ${
-                users.includes(currentUser)
-                  ? 'border-foreground/30 bg-muted'
-                  : 'border-border bg-card hover:border-foreground/20'
-              }`}
-            >
-              <span>{emoji}</span>
-              <span className="text-muted-foreground font-mono text-[10px]">{users.length}</span>
-            </motion.button>
-          ))}
-        </div>
-      )}
-
       {groupInfo.isLastInGroup && (
         <div className={`flex items-center gap-1 ${isOwn ? 'justify-end mr-1' : 'ml-1'}`}>
           <span className="text-[10px] text-muted-foreground">{formatTime(msg.timestamp)}</span>
