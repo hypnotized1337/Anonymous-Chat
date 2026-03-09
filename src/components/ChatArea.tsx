@@ -206,7 +206,6 @@ export function ChatArea({
   const handleDrop = (e: React.DragEvent) => { e.preventDefault(); dragCounter.current = 0; setDragging(false); const file = e.dataTransfer.files[0]; if (file) handleFileUpload(file); };
 
   const isInputDisabled = frozen && frozenBy !== currentUser;
-  const { quickReactions, frequentlyUsed, recordReaction } = useFrequentReactions();
 
   const groupedMessages = useMemo(() => {
     return messages.map((msg, i) => {
