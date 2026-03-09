@@ -9,6 +9,7 @@ import {
   ContextMenuItem,
 } from '@/components/ui/context-menu';
 import { ExternalLink } from 'lucide-react';
+import { LinkPreview } from './LinkPreview';
 import { toast } from 'sonner';
 import { StatusIcon } from './StatusIcon';
 import { ImageAttachment } from './ImageAttachment';
