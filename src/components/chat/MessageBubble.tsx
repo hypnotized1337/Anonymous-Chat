@@ -174,11 +174,6 @@ export const MessageBubble = memo(function MessageBubble({
   const showUsername = !isOwn && groupInfo.isFirstInGroup;
   const radiusClass = getBubbleRadius(isOwn, groupInfo);
 
-  const handleReact = (emoji: string) => {
-    onReact(msg.id, emoji);
-    setShowReactionPicker(false);
-  };
-
   const bubble = (
     <div className={`max-w-[75%] space-y-0.5 ${isOwn ? 'items-end' : 'items-start'} flex flex-col`}>
       {showUsername && (
