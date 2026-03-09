@@ -501,7 +501,7 @@ export function ChatArea({
             onChange={handleInputChange}
             placeholder={isInputDisabled ? 'Chat is frozen' : 'Message'}
             disabled={isInputDisabled}
-            className="flex-1 bg-transparent py-2.5 px-2 text-sm text-foreground placeholder:text-muted-foreground outline-none transition-colors disabled:opacity-30 disabled:cursor-not-allowed font-sans"
+            className="flex-1 bg-transparent py-2.5 px-2 text-sm text-foreground placeholder:text-muted-foreground outline-none transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
             maxLength={2000}
           />
           {input.length > 1800 && (
