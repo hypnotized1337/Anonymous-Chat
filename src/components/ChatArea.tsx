@@ -13,7 +13,6 @@ import { VideoInspector, InspectedVideo } from '@/components/chat/VideoInspector
 import { ReplyPreview } from '@/components/chat/ReplyPreview';
 import { ACCEPTED_FILE_TYPES } from '@/components/chat/FileHelpers';
 import { ChatSidebar } from '@/components/ChatSidebar';
-import { useFrequentReactions } from '@/hooks/use-frequent-reactions';
 
 interface ChatAreaProps {
   messages: ChatMessage[];
