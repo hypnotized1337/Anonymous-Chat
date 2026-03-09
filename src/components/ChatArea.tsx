@@ -13,7 +13,6 @@ import { VideoInspector, InspectedVideo } from '@/components/chat/VideoInspector
 import { ReplyPreview } from '@/components/chat/ReplyPreview';
 import { ACCEPTED_FILE_TYPES } from '@/components/chat/FileHelpers';
 import { ChatSidebar } from '@/components/ChatSidebar';
-import { useFrequentReactions } from '@/hooks/use-frequent-reactions';
 
 interface ChatAreaProps {
   messages: ChatMessage[];
@@ -36,7 +35,6 @@ interface ChatAreaProps {
   onUnsend: (messageId: string) => void;
   onSendImage: (file: File, onProgress?: (p: number) => void) => void;
   onSendGif: (url: string) => void;
-  onReact: (messageId: string, emoji: string) => void;
 }
 
 export function ChatArea({
@@ -60,7 +58,6 @@ export function ChatArea({
   onUnsend,
   onSendImage,
   onSendGif,
-  onReact,
 }: ChatAreaProps) {
   const [input, setInput] = useState('');
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -209,7 +206,6 @@ export function ChatArea({
   const handleDrop = (e: React.DragEvent) => { e.preventDefault(); dragCounter.current = 0; setDragging(false); const file = e.dataTransfer.files[0]; if (file) handleFileUpload(file); };
 
   const isInputDisabled = frozen && frozenBy !== currentUser;
-  const { quickReactions, frequentlyUsed, recordReaction } = useFrequentReactions();
 
   const groupedMessages = useMemo(() => {
     return messages.map((msg, i) => {
@@ -334,16 +330,12 @@ export function ChatArea({
                   onEdit={handleStartEdit}
                   onUnsend={onUnsend}
                   onReply={setReplyingTo}
-                  onReact={onReact}
                   onScrollToMessage={scrollToMessage}
                   editingId={editingId}
                   editText={editText}
                   onEditTextChange={setEditText}
                   onEditSubmit={handleEditSubmit}
                   onEditCancel={handleEditCancel}
-                  quickReactions={quickReactions}
-                  frequentlyUsed={frequentlyUsed}
-                  recordReaction={recordReaction}
                 />
               </div>
             ))}
