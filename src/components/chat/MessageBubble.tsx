@@ -246,6 +246,7 @@ export const MessageBubble = memo(function MessageBubble({
             />
           )}
           {msg.text && renderMessageText(msg.text)}
+          {msg.text && !msg.isGif && (() => { const u = extractFirstUrl(msg.text); return u ? <LinkPreview url={u} /> : null; })()}
         </div>
       )}
 
