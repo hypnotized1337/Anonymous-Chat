@@ -488,7 +488,7 @@ export function JoinScreen({ onJoin }: JoinScreenProps) {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.4, delay: 0.9 }}>
             
-                         Everything is deleted on exit · nothing is stored
+                         Everything is deleted on exit · nothing stored
         </motion.p>
         <motion.div
             className="flex items-center justify-center gap-4 pt-1"
