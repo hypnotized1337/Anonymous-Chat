@@ -272,7 +272,7 @@ export function JoinScreen({ onJoin }: JoinScreenProps) {
       <LayoutGroup>
         <motion.form
           onSubmit={handleSubmit}
-          className="w-full max-w-sm space-y-5 relative z-10 border border-white/20 bg-card/30 backdrop-blur-md rounded-2xl p-7 shadow-[0_0_80px_-20px_hsl(var(--foreground)/0.04)]"
+          className="w-full max-w-sm space-y-5 relative z-10 border border-white/20 bg-card/30 backdrop-blur-xl rounded-2xl p-7 shadow-[0_0_80px_-20px_hsl(var(--foreground)/0.04),inset_0_0_0_1px_rgba(255,255,255,0.05)]"
           initial={{ opacity: 0, y: 20, filter: 'blur(8px)' }}
           animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
           transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}>
@@ -304,15 +304,15 @@ export function JoinScreen({ onJoin }: JoinScreenProps) {
               type="button"
               onClick={() => switchMode('create')}
               disabled={isLoading}
-              className={`relative flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono rounded-md transition-colors z-10 ${mode === 'create' ?
+              className={`relative flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono rounded-full transition-colors z-10 ${mode === 'create' ?
                 'text-primary-foreground' :
-                'text-muted-foreground hover:text-foreground'}`
+                'text-muted-foreground hover:text-foreground hover:bg-white/5'}`
               }>
 
               {mode === 'create' &&
                 <motion.div
                   layoutId="tab-highlight"
-                  className="absolute inset-0 bg-primary rounded-md"
+                  className="absolute inset-0 bg-primary rounded-full shadow-[0_0_15px_rgba(255,255,255,0.3)]"
                   transition={{ type: 'spring', stiffness: 400, damping: 30 }} />
 
               }
@@ -325,15 +325,15 @@ export function JoinScreen({ onJoin }: JoinScreenProps) {
               type="button"
               onClick={() => switchMode('join')}
               disabled={isLoading}
-              className={`relative flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono rounded-md transition-colors z-10 ${mode === 'join' ?
+              className={`relative flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono rounded-full transition-colors z-10 ${mode === 'join' ?
                 'text-primary-foreground' :
-                'text-muted-foreground hover:text-foreground'}`
+                'text-muted-foreground hover:text-foreground hover:bg-white/5'}`
               }>
 
               {mode === 'join' &&
                 <motion.div
                   layoutId="tab-highlight"
-                  className="absolute inset-0 bg-primary rounded-md"
+                  className="absolute inset-0 bg-primary rounded-full shadow-[0_0_15px_rgba(255,255,255,0.3)]"
                   transition={{ type: 'spring', stiffness: 400, damping: 30 }} />
 
               }
@@ -371,7 +371,7 @@ export function JoinScreen({ onJoin }: JoinScreenProps) {
               value={username}
               onChange={(e) => { setUsername(e.target.value); setError(null); }}
               placeholder="your identity"
-              className="w-full bg-input rounded-md py-2.5 px-3 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:ring-1 focus:ring-ring transition-colors font-mono"
+              className="w-full bg-input rounded-lg border border-white/5 py-2.5 px-3 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:ring-1 focus:ring-ring transition-colors font-mono"
               maxLength={20}
               required
               disabled={isLoading} />
@@ -392,7 +392,7 @@ export function JoinScreen({ onJoin }: JoinScreenProps) {
                 value={roomName}
                 onChange={(e) => { setRoomName(e.target.value); setNeedsPassword(false); setJoinPassword(''); setRoomTaken(false); setError(null); }}
                 placeholder={mode === 'create' ? 'choose a room code' : 'enter room code'}
-                className={`w-full bg-input rounded-md py-2.5 px-3 text-sm text-transparent placeholder:text-muted-foreground outline-none focus:ring-1 transition-colors font-mono caret-foreground selection:bg-foreground/20 selection:text-transparent ${roomTaken ? 'ring-2 ring-destructive focus:ring-destructive' : 'focus:ring-ring'}`}
+                className={`w-full bg-input rounded-lg border border-white/5 py-2.5 px-3 text-sm text-transparent placeholder:text-muted-foreground outline-none focus:ring-1 transition-colors font-mono caret-foreground selection:bg-foreground/20 selection:text-transparent ${roomTaken ? 'ring-2 ring-destructive focus:ring-destructive border-transparent' : 'focus:ring-ring'}`}
                 maxLength={30}
                 required
                 disabled={isLoading}
@@ -455,7 +455,7 @@ export function JoinScreen({ onJoin }: JoinScreenProps) {
                         value={roomPassword}
                         onChange={(e) => setRoomPassword(e.target.value)}
                         placeholder="room password"
-                        className="w-full bg-input rounded-md py-2.5 px-3 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:ring-1 focus:ring-ring transition-colors font-mono"
+                        className="w-full bg-input rounded-lg border border-white/5 py-2.5 px-3 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:ring-1 focus:ring-ring transition-colors font-mono"
                         maxLength={50}
                         disabled={isLoading}
                         autoComplete="new-password" />
@@ -486,7 +486,7 @@ export function JoinScreen({ onJoin }: JoinScreenProps) {
                   value={joinPassword}
                   onChange={(e) => { setJoinPassword(e.target.value); setError(null); }}
                   placeholder="••••••••"
-                  className="w-full bg-input rounded-md py-2.5 px-3 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:ring-1 focus:ring-ring transition-colors font-mono"
+                  className="w-full bg-input rounded-lg border border-white/5 py-2.5 px-3 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:ring-1 focus:ring-ring transition-colors font-mono"
                   maxLength={50}
                   autoFocus
                   disabled={isLoading}
@@ -505,9 +505,11 @@ export function JoinScreen({ onJoin }: JoinScreenProps) {
             <motion.button
               type="submit"
               disabled={isSubmitDisabled}
-              className="w-full bg-primary text-primary-foreground font-medium py-2.5 rounded-lg flex items-center justify-center gap-2 hover:opacity-90 transition-all disabled:opacity-20 disabled:cursor-not-allowed font-mono text-sm relative join-button-glow"
+              className="w-full bg-primary text-primary-foreground font-medium py-2.5 rounded-lg flex items-center justify-center gap-2 hover:opacity-90 transition-all disabled:opacity-20 disabled:cursor-not-allowed font-mono text-sm relative join-button-glow overflow-hidden group border border-white/10 shadow-[0_2px_10px_rgba(255,255,255,0.1)]"
               whileTap={{ scale: 0.97 }}
-              whileHover={!isSubmitDisabled ? { scale: 1.01 } : undefined}>
+              whileHover={!isSubmitDisabled ? { scale: 1.02 } : undefined}>
+              
+              <div className="absolute inset-0 -translate-x-full group-hover:animate-[shimmer_1.5s_infinite] bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-12" />
 
               {isLoading ?
                 <>
@@ -542,17 +544,17 @@ export function JoinScreen({ onJoin }: JoinScreenProps) {
             Everything is deleted on exit · nothing stored
           </motion.p>
           <motion.div
-            className="flex items-center justify-center gap-4 pt-1"
+            className="flex items-center justify-center gap-5 pt-3"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.4, delay: 1.0 }}>
 
-            <Link to="/changelog" className="inline-flex items-center gap-1.5 text-[11px] text-muted-foreground/50 hover:text-muted-foreground font-mono transition-colors">
-              <GitCommit className="w-3 h-3" /> changelog
+            <Link to="/changelog" className="inline-flex items-center gap-1.5 text-xs text-muted-foreground/50 hover:text-white font-mono transition-colors">
+              <GitCommit className="w-3.5 h-3.5" /> changelog
             </Link>
-            <span className="text-muted-foreground/20 text-[10px]">·</span>
-            <Link to="/features" className="inline-flex items-center gap-1.5 text-[11px] text-muted-foreground/50 hover:text-muted-foreground font-mono transition-colors">
-              <Sparkles className="w-3 h-3" /> features
+            <div className="w-1 h-1 rounded-full bg-white/20 shadow-[0_0_8px_rgba(255,255,255,0.5)]" />
+            <Link to="/features" className="inline-flex items-center gap-1.5 text-xs text-muted-foreground/50 hover:text-white font-mono transition-colors">
+              <Sparkles className="w-3.5 h-3.5" /> features
             </Link>
           </motion.div>
         </motion.form>
