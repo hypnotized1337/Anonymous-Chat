@@ -10,7 +10,7 @@ A minimalist, account-free, ephemeral chat application. No sign-ups, no tracking
 
 | Join Screen | Chat View |
 |:-----------:|:---------:|
-| <img src="public/screenshots/join-screen.png" width="400" alt="Join Screen" /> | <img src="public/screenshots/chat-view.png" width="400" alt="Chat View" /> |
+| <img src="public/screenshots/join-screen.png" width="400" alt="Join Screen" /> | <img src="public/screenshots/chat.png" width="400" alt="Chat View" /> |
 
 ---
 
