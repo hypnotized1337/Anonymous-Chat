@@ -34,6 +34,7 @@ interface ChatAreaProps {
   onUnsend: (messageId: string) => void;
   onSendImage: (file: File, onProgress?: (p: number) => void) => void;
   onSendGif: (url: string) => void;
+  onToggleReaction: (messageId: string, emoji: string) => void;
 }
 
 interface MessageListProps {
@@ -53,6 +54,7 @@ interface MessageListProps {
   setEditText: (text: string) => void;
   handleEditSubmit: (id: string) => void;
   handleEditCancel: () => void;
+  onToggleReaction: (messageId: string, emoji: string) => void;
 }
 
 // Extract MessageList to prevent re-rendering all messages on minor ChatArea state changes (e.g., input typing, scrolling)
@@ -72,7 +74,8 @@ const MessageList = React.memo(({
   scrollToMessage, 
   setEditText, 
   handleEditSubmit, 
-  handleEditCancel 
+  handleEditCancel,
+  onToggleReaction
 }: MessageListProps) => {
   return (
     <AnimatePresence initial={false}>
@@ -103,6 +106,7 @@ const MessageList = React.memo(({
             onEditTextChange={setEditText}
             onEditSubmit={handleEditSubmit}
             onEditCancel={handleEditCancel}
+            onToggleReaction={onToggleReaction}
           />
         </div>
       ))}
@@ -131,6 +135,7 @@ export function ChatArea({
   onUnsend,
   onSendImage,
   onSendGif,
+  onToggleReaction,
 }: ChatAreaProps) {
   const [input, setInput] = useState('');
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -349,6 +354,7 @@ export function ChatArea({
           setEditText={setEditText}
           handleEditSubmit={handleEditSubmit}
           handleEditCancel={handleEditCancel}
+          onToggleReaction={onToggleReaction}
         />
 
         {/* Nuke dissolve overlay */}

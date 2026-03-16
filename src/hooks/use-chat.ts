@@ -400,6 +400,42 @@ export function useChat() {
     }
   }, []);
 
+  const toggleReaction = useCallback((messageId: string, emoji: string) => {
+    setState(prev => {
+      const messages = prev.messages.map(m => {
+        if (m.id !== messageId) return m;
+        const currentReactions = m.reactions || {};
+        const usersForEmoji = currentReactions[emoji] || [];
+        const hasReacted = usersForEmoji.includes(usernameRef.current);
+        
+        let newUsersForEmoji;
+        if (hasReacted) {
+          newUsersForEmoji = usersForEmoji.filter(u => u !== usernameRef.current);
+        } else {
+          newUsersForEmoji = [...usersForEmoji, usernameRef.current];
+        }
+
+        const newReactions = { ...currentReactions };
+        if (newUsersForEmoji.length === 0) {
+          delete newReactions[emoji];
+        } else {
+          newReactions[emoji] = newUsersForEmoji;
+        }
+
+        return { ...m, reactions: newReactions };
+      });
+      return { ...prev, messages };
+    });
+
+    if (channelRef.current) {
+      channelRef.current.send({
+        type: 'broadcast',
+        event: 'reaction',
+        payload: { messageId, emoji, username: usernameRef.current }
+      });
+    }
+  }, []);
+
   const sendImage = useCallback(async (file: File, onProgress?: (p: number) => void) => {
     if (!checkRateLimit()) return;
 
@@ -477,6 +513,6 @@ export function useChat() {
   return {
     state, joinRoom, leaveRoom, sendMessage, sendTyping, sendGif,
     toggleNotifications, nukeRoom, freezeChat, sendAnnouncement, editMessage, unsendMessage, sendImage,
-    kickUser,
+    kickUser, toggleReaction,
   };
 }

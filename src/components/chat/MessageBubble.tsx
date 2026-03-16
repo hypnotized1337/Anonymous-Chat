@@ -44,6 +44,7 @@ interface MessageBubbleProps {
   onEditTextChange: (text: string) => void;
   onEditSubmit: (id: string) => void;
   onEditCancel: () => void;
+  onToggleReaction: (messageId: string, emoji: string) => void;
 }
 
 const URL_RE = /https?:\/\/[^\s<>"')\]]+/g;
@@ -129,6 +130,7 @@ export const MessageBubble = memo(function MessageBubble({
   onEditTextChange,
   onEditSubmit,
   onEditCancel,
+  onToggleReaction,
 }: MessageBubbleProps) {
 
   if (msg.type === 'system') {
@@ -261,11 +263,45 @@ export const MessageBubble = memo(function MessageBubble({
         </div>
       )}
 
+      {msg.reactions && Object.keys(msg.reactions).length > 0 && (
+        <div className={`flex flex-wrap gap-1 mt-1 ${isOwn ? 'justify-end mr-1' : 'ml-1'}`}>
+          {Object.entries(msg.reactions).map(([emoji, users]) => {
+            if (users.length === 0) return null;
+            const hasReacted = users.includes(currentUser);
+            return (
+              <button
+                key={emoji}
+                onClick={() => onToggleReaction(msg.id, emoji)}
+                className={`flex items-center gap-1 select-none px-1.5 py-0.5 rounded-full text-[11px] font-mono border transition-colors ${
+                  hasReacted 
+                    ? 'bg-primary/20 border-primary/30 text-primary-foreground' 
+                    : 'bg-white/5 border-white/5 text-muted-foreground hover:bg-white/10 hover:border-white/10'
+                }`}
+                title={users.join(', ')}
+              >
+                <span>{emoji}</span>
+                <span className={hasReacted ? 'text-primary-foreground opacity-90' : 'opacity-70'}>{users.length}</span>
+              </button>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 
   const contextMenuItems = (
-    <ContextMenuContent>
+    <ContextMenuContent className="min-w-fit w-fit">
+      <div className="flex gap-1 p-1 mb-1 bg-white/5 rounded-md justify-center">
+        {['👍', '❤️', '😂', '😲', '😢', '🙏'].map(emoji => (
+          <button
+            key={emoji}
+            onClick={() => onToggleReaction(msg.id, emoji)}
+            className="w-8 h-8 flex items-center justify-center text-lg rounded hover:bg-white/10 transition-colors"
+          >
+            {emoji}
+          </button>
+        ))}
+      </div>
       {isOwn && <ContextMenuItem onSelect={() => onEdit(msg.id, msg.text)}>Edit</ContextMenuItem>}
       {isOwn && <ContextMenuItem onSelect={() => onUnsend(msg.id)}>Unsend</ContextMenuItem>}
       <ContextMenuItem onSelect={() => onReply({ id: msg.id, username: msg.username, text: msg.text.slice(0, 100) })}>

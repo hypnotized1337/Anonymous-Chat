@@ -11,6 +11,7 @@ import {
   EditSchema,
   UnsendSchema,
   KickSchema,
+  ReactionSchema,
   safeParse
 } from '@/lib/chat-schemas';
 
@@ -176,6 +177,40 @@ export function setupChatEvents(channel: RealtimeChannel, ctx: ChatEventContext)
     setState(prev => ({
       ...prev,
       messages: prev.messages.map(m => m.id === parsed.messageId ? { ...m, text: '', deleted: true } : m),
+    }));
+  });
+
+  channel.on('broadcast', { event: 'reaction' }, (payload) => {
+    const parsed = safeParse(ReactionSchema, payload.payload);
+    if (!parsed) return;
+    const { messageId, emoji, username } = parsed;
+    // Don't process our own reactions that we already optimistically applied
+    if (username === usernameRef.current) return;
+
+    setState(prev => ({
+      ...prev,
+      messages: prev.messages.map(m => {
+        if (m.id !== messageId) return m;
+        const currentReactions = m.reactions || {};
+        const usersForEmoji = currentReactions[emoji] || [];
+        const hasReacted = usersForEmoji.includes(username);
+        
+        let newUsersForEmoji;
+        if (hasReacted) {
+          newUsersForEmoji = usersForEmoji.filter(u => u !== username);
+        } else {
+          newUsersForEmoji = [...usersForEmoji, username];
+        }
+
+        const newReactions = { ...currentReactions };
+        if (newUsersForEmoji.length === 0) {
+          delete newReactions[emoji];
+        } else {
+          newReactions[emoji] = newUsersForEmoji;
+        }
+
+        return { ...m, reactions: newReactions };
+      })
     }));
   });
 

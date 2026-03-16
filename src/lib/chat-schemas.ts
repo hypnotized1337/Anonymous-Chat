@@ -23,6 +23,7 @@ export const ChatMessageSchema = z.object({
   fileSize: z.number().optional(),
   fileMimeType: z.string().max(100).optional(),
   replyTo: ReplyToSchema,
+  reactions: z.record(z.string(), z.array(z.string())).optional()
 });
 
 export const TypingSchema = z.object({ username: z.string().max(20) });
@@ -32,6 +33,7 @@ export const FreezeSchema = z.object({ frozen: z.boolean(), by: z.string().max(2
 export const EditSchema = z.object({ messageId: z.string().max(50), newText: z.string().max(5000) });
 export const UnsendSchema = z.object({ messageId: z.string().max(50) });
 export const KickSchema = z.object({ username: z.string().max(20) });
+export const ReactionSchema = z.object({ messageId: z.string().max(50), emoji: z.string().max(10), username: z.string().max(20) });
 
 export function safeParse<T>(schema: z.ZodSchema<T>, data: unknown): T | null {
   const result = schema.safeParse(data);

@@ -11,7 +11,7 @@ const Index = () => {
   const {
     state, joinRoom, leaveRoom, sendMessage, sendTyping,
     toggleNotifications, nukeRoom, freezeChat, sendAnnouncement, editMessage, unsendMessage, sendImage, sendGif,
-    kickUser,
+    kickUser, toggleReaction
   } = useChat();
   const [adminOpen, setAdminOpen] = useState(false);
   const [authOverlay, setAuthOverlay] = useState(false);
@@ -108,6 +108,7 @@ const Index = () => {
             onUnsend={unsendMessage}
             onSendImage={sendImage}
             onSendGif={sendGif}
+            onToggleReaction={toggleReaction}
           />
           {authOverlay && (
             <AdminAuthOverlay
