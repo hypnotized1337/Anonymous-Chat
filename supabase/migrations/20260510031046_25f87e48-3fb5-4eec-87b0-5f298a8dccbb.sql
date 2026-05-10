@@ -1,0 +1,1 @@
+DROP POLICY IF EXISTS "Anyone can read room passwords" ON public.room_passwords;
