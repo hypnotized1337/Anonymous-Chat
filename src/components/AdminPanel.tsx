@@ -61,6 +61,7 @@ export function AdminPanel({
               <span className="text-xs font-mono font-medium text-foreground tracking-wider uppercase">Message Log</span>
               <button
                 onClick={() => setView('main')}
+                aria-label="Close message log"
                 className="w-7 h-7 flex items-center justify-center rounded-md text-muted-foreground hover:text-background hover:bg-foreground transition-colors active:scale-[0.95]"
               >
                 <X className="w-3.5 h-3.5" />
@@ -92,6 +93,7 @@ export function AdminPanel({
               <span className="text-xs font-mono font-medium text-foreground tracking-wider uppercase">Kick User</span>
               <button
                 onClick={() => setView('main')}
+                aria-label="Close kick panel"
                 className="w-7 h-7 flex items-center justify-center rounded-md text-muted-foreground hover:text-background hover:bg-foreground transition-colors active:scale-[0.95]"
               >
                 <X className="w-3.5 h-3.5" />
@@ -129,6 +131,7 @@ export function AdminPanel({
               <span className="text-xs font-mono font-medium text-foreground tracking-widest uppercase">/admin</span>
               <button
                 onClick={onClose}
+                aria-label="Close admin panel"
                 className="w-7 h-7 flex items-center justify-center rounded-md text-muted-foreground hover:text-background hover:bg-foreground transition-colors active:scale-[0.95]"
               >
                 <X className="w-3.5 h-3.5" />
@@ -183,13 +186,15 @@ export function AdminPanel({
             <div className="space-y-2 pt-1">
               <div className="flex items-center gap-2">
                 <Megaphone className="w-3.5 h-3.5 text-muted-foreground" />
-                <span className="text-xs font-mono text-muted-foreground uppercase tracking-wider">Announce</span>
+                <label htmlFor="admin-announce" className="text-xs font-mono text-muted-foreground uppercase tracking-wider">Announce</label>
               </div>
               <div className="flex gap-2">
                 <input
+                  id="admin-announce"
                   value={announcement}
                   onChange={e => setAnnouncement(e.target.value)}
                   placeholder="System message..."
+                  aria-label="Announcement text"
                   className="flex-1 bg-input rounded-xl py-2.5 px-3 text-sm text-foreground placeholder:text-muted-foreground outline-none font-mono border border-foreground/10 focus:border-foreground/30 transition-colors"
                   maxLength={200}
                 />

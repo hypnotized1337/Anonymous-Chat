@@ -1,4 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useChat } from '@/hooks/use-chat';
 import { JoinScreen } from '@/components/JoinScreen';
@@ -62,7 +63,16 @@ const Index = () => {
   };
 
   return (
-    <AnimatePresence mode="wait">
+    <>
+      <Helmet>
+        <title>v0id — Ephemeral Room-Based Chat</title>
+        <meta name="description" content="Minimalist, account-free real-time chat. Spin up a room, share a code, and everything is deleted on exit — nothing is stored." />
+        <link rel="canonical" href="https://v0id-chat.lovable.app/" />
+        <meta property="og:title" content="v0id — Ephemeral Room-Based Chat" />
+        <meta property="og:description" content="Minimalist, account-free real-time chat. Spin up a room, share a code, and everything is deleted on exit." />
+        <meta property="og:url" content="https://v0id-chat.lovable.app/" />
+      </Helmet>
+      <AnimatePresence mode="wait">
       {!state.isJoined ? (
         <motion.div
           key="join"
@@ -131,6 +141,7 @@ const Index = () => {
         </motion.div>
       )}
     </AnimatePresence>
+    </>
   );
 };
 

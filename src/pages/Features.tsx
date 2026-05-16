@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { ArrowLeft, Sparkles, Loader2, AlertCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { supabase } from '@/integrations/supabase/client';
@@ -30,6 +31,14 @@ export default function Features() {
 
   return (
     <div className="min-h-screen bg-black text-foreground p-4 sm:p-8 font-mono relative overflow-hidden">
+      <Helmet>
+        <title>Features — v0id Ephemeral Chat</title>
+        <meta name="description" content="An AI-generated overview of v0id's features: ephemeral rooms, password protection, real-time presence, and more." />
+        <link rel="canonical" href="https://v0id-chat.lovable.app/features" />
+        <meta property="og:title" content="Features — v0id Ephemeral Chat" />
+        <meta property="og:description" content="An AI-generated overview of v0id's features: ephemeral rooms, password protection, real-time presence, and more." />
+        <meta property="og:url" content="https://v0id-chat.lovable.app/features" />
+      </Helmet>
       <InteractiveVoidBackground />
       <div className="grain-overlay" />
 

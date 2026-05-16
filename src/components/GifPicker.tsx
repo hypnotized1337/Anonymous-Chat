@@ -73,6 +73,7 @@ export function GifPicker({ onSelect, disabled }: GifPickerProps) {
         <button
           type="button"
           disabled={disabled}
+          aria-label="Open GIF picker"
           className="p-2.5 text-muted-foreground hover:text-foreground transition-all active:scale-[0.95] disabled:opacity-20 disabled:cursor-not-allowed"
           title="Send GIF">
           
@@ -90,13 +91,13 @@ export function GifPicker({ onSelect, disabled }: GifPickerProps) {
           <input
             value={query}
             onChange={(e) => handleQueryChange(e.target.value)}
-
             autoFocus
+            aria-label="Search GIFs"
             className="flex-1 bg-transparent text-sm text-foreground placeholder:text-foreground/50 outline-none"
             maxLength={100} placeholder="Search KLIPY" />
           
           {query &&
-          <button onClick={() => {setQuery('');setResults([]);setError(false);}}>
+          <button onClick={() => {setQuery('');setResults([]);setError(false);}} aria-label="Clear GIF search">
               <X className="w-3.5 h-3.5 text-foreground" />
             </button>
           }
@@ -134,6 +135,7 @@ export function GifPicker({ onSelect, disabled }: GifPickerProps) {
             <button
               key={gif.id}
               onClick={() => handleSelect(gif.url)}
+              aria-label={`Send GIF ${gif.id}`}
               className="relative overflow-hidden border border-foreground hover:border-primary transition-all duration-200">
               
                   <img
