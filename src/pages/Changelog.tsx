@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { ArrowLeft, GitCommit, Loader2, AlertCircle, Sparkles, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '@/integrations/supabase/client';
@@ -84,6 +85,14 @@ export default function Changelog() {
 
   return (
     <div className="min-h-screen bg-black text-foreground p-4 sm:p-8 font-mono relative overflow-hidden">
+      <Helmet>
+        <title>Changelog — v0id Ephemeral Chat</title>
+        <meta name="description" content="Recent commits and AI-summarized release notes for v0id, a minimalist real-time ephemeral chat." />
+        <link rel="canonical" href="https://v0id-chat.lovable.app/changelog" />
+        <meta property="og:title" content="Changelog — v0id Ephemeral Chat" />
+        <meta property="og:description" content="Recent commits and AI-summarized release notes for v0id." />
+        <meta property="og:url" content="https://v0id-chat.lovable.app/changelog" />
+      </Helmet>
       <InteractiveVoidBackground />
       <div className="grain-overlay" />
       
