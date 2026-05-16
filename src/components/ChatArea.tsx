@@ -236,6 +236,7 @@ export function ChatArea({
       <header className="h-10 flex items-center px-3 shrink-0 bg-secondary/50 border-b border-border sticky top-0 z-20">
         <button
           onClick={() => setMobileSidebarOpen(true)}
+          aria-label="Open users sidebar"
           className="w-7 h-7 flex items-center justify-center rounded-sm hover:bg-muted text-muted-foreground hover:text-foreground transition-colors md:hidden"
         >
           <Users className="w-4 h-4" />
@@ -252,7 +253,7 @@ export function ChatArea({
         <div className="flex items-center gap-1">
           <Popover>
             <PopoverTrigger asChild>
-              <button className="w-7 h-7 flex items-center justify-center rounded-sm hover:bg-muted text-foreground transition-colors">
+              <button aria-label="Adjust UI scale" className="w-7 h-7 flex items-center justify-center rounded-sm hover:bg-muted text-foreground transition-colors">
                 <ZoomIn className="w-4 h-4" />
               </button>
             </PopoverTrigger>
@@ -274,6 +275,7 @@ export function ChatArea({
           </Popover>
           <motion.button
             onClick={handleNotificationToggle}
+            aria-label={notificationsEnabled ? 'Disable notifications' : 'Enable notifications'}
             animate={notificationJiggle ? {
               rotate: [0, -15, 15, -12, 12, -6, 6, -2, 2, 0],
             } : { rotate: 0 }}
@@ -282,7 +284,7 @@ export function ChatArea({
           >
             {notificationsEnabled ? <Bell className="w-4 h-4" /> : <BellOff className="w-4 h-4" />}
           </motion.button>
-          <button onClick={onLeave} className="w-7 h-7 flex items-center justify-center rounded-sm hover:bg-muted text-muted-foreground hover:text-foreground transition-all active:scale-[0.95] md:hidden">
+          <button onClick={onLeave} aria-label="Leave room" className="w-7 h-7 flex items-center justify-center rounded-sm hover:bg-muted text-muted-foreground hover:text-foreground transition-all active:scale-[0.95] md:hidden">
             <LogOut className="w-3.5 h-3.5" />
           </button>
         </div>
@@ -488,6 +490,7 @@ export function ChatArea({
             type="button"
             onClick={() => fileInputRef.current?.click()}
             disabled={isInputDisabled}
+            aria-label="Attach file"
             className="p-3 text-muted-foreground hover:text-foreground hover:-rotate-12 transition-all active:scale-[0.95] disabled:opacity-20 disabled:cursor-not-allowed"
           >
             <Plus className="w-5 h-5" />
@@ -499,6 +502,7 @@ export function ChatArea({
             onChange={handleInputChange}
             placeholder={isInputDisabled ? 'Chat is frozen' : 'Message...'}
             disabled={isInputDisabled}
+            aria-label="Message"
             className="flex-1 bg-transparent py-3 px-2 text-sm text-foreground placeholder:text-muted-foreground outline-none transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
             maxLength={2000}
           />
@@ -510,6 +514,7 @@ export function ChatArea({
           <motion.button
             type="submit"
             disabled={!input.trim() || isInputDisabled}
+            aria-label="Send message"
             className={`p-2.5 rounded-sm transition-all disabled:opacity-20 disabled:cursor-not-allowed flex items-center justify-center ${
               input.trim() ? 'bg-primary/20 text-primary hover:bg-primary/30' : 'text-muted-foreground bg-transparent'
             }`}
