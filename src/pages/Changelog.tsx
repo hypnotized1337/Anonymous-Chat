@@ -144,6 +144,7 @@ export default function Changelog() {
                 </span>
                 <button
                   onClick={() => setSummary(null)}
+                  aria-label="Close AI summary"
                   className="p-1 rounded-sm text-white/40 hover:text-white hover:bg-white/10 transition-colors"
                 >
                   <X className="w-4 h-4" />
