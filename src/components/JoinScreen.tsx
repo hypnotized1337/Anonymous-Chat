@@ -47,7 +47,7 @@ function VoidLogo() {
 
       {/* Main title with letter stagger */}
       <h1 className="relative select-none">
-        <span className="sr-only">v0id</span>
+        <span className="sr-only">v0id — Minimalist real-time ephemeral chat</span>
         <span
           className={`void-logo-text text-5xl font-semibold tracking-tight font-mono text-foreground inline-flex ${glitching ? 'void-glitch-active' : ''}`}
           aria-hidden="true"
@@ -365,12 +365,14 @@ export function JoinScreen({ onJoin }: JoinScreenProps) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: 0.3 }}>
 
-            <label className="text-xs font-medium text-muted-foreground font-mono">Username</label>
+            <label htmlFor="join-username" className="text-xs font-medium text-muted-foreground font-mono">Username</label>
             <input
+              id="join-username"
               type="text"
               value={username}
               onChange={(e) => { setUsername(e.target.value); setError(null); }}
               placeholder="your identity"
+              aria-label="Username"
               className="w-full bg-input rounded-sm border border-border py-2.5 px-3 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:ring-1 focus:ring-ring transition-colors font-mono"
               maxLength={20}
               required
@@ -385,9 +387,11 @@ export function JoinScreen({ onJoin }: JoinScreenProps) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: 0.5 }}>
 
-            <label className="text-xs font-medium text-muted-foreground font-mono">Room Code</label>
+            <label htmlFor="join-room-code" className="text-xs font-medium text-muted-foreground font-mono">Room Code</label>
             <div className="relative">
               <input
+                id="join-room-code"
+                aria-label="Room code"
                 type="text"
                 value={roomName}
                 onChange={(e) => { setRoomName(e.target.value); setNeedsPassword(false); setJoinPassword(''); setRoomTaken(false); setError(null); }}
@@ -428,11 +432,13 @@ export function JoinScreen({ onJoin }: JoinScreenProps) {
                 className="space-y-3">
 
                 <div className="flex items-center justify-between">
-                  <label className="text-xs font-medium text-muted-foreground font-mono flex items-center gap-1.5">
+                  <label id="pw-protect-label" htmlFor="pw-protect-switch" className="text-xs font-medium text-muted-foreground font-mono flex items-center gap-1.5">
                     <Lock className="w-3 h-3" />
                     Password Protect
                   </label>
                   <Switch
+                    id="pw-protect-switch"
+                    aria-labelledby="pw-protect-label"
                     checked={passwordProtect}
                     onCheckedChange={(checked) => {
                       setPasswordProtect(checked);
@@ -563,6 +569,7 @@ export function JoinScreen({ onJoin }: JoinScreenProps) {
               href="https://github.com/hypnotized1337/Void-chat" 
               target="_blank" 
               rel="noopener noreferrer"
+              aria-label="View v0id source on GitHub"
               className="inline-flex items-center gap-1.5 text-xs text-muted-foreground/30 hover:text-white/80 font-mono transition-colors mt-2"
             >
               <Github className="w-4 h-4" />
