@@ -1,0 +1,11 @@
+# v0id
+
+> Minimalist, account-free, ephemeral real-time chat. Create a room, share the code, and everything is deleted on exit — nothing is stored.
+
+v0id is a browser-based anonymous chat platform with a JetBrains-inspired terminal aesthetic. Rooms are password-optional, messages auto-burn after 10 minutes, and there are no accounts.
+
+## Pages
+
+- [Home](/): Create or join a room with just a username and a room code.
+- [Features](/features): AI-generated summary of what v0id can do.
+- [Changelog](/changelog): Recent commits and AI-summarized release notes.
