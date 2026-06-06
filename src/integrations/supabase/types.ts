@@ -110,22 +110,25 @@ export type Database = {
       room_passwords: {
         Row: {
           created_at: string
-          created_by: string
+          created_by: string | null
           id: string
+          owner_token_hash: string | null
           password_hash: string
           room_code: string
         }
         Insert: {
           created_at?: string
-          created_by: string
+          created_by?: string | null
           id?: string
+          owner_token_hash?: string | null
           password_hash: string
           room_code: string
         }
         Update: {
           created_at?: string
-          created_by?: string
+          created_by?: string | null
           id?: string
+          owner_token_hash?: string | null
           password_hash?: string
           room_code?: string
         }
