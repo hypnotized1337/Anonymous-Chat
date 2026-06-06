@@ -195,9 +195,13 @@ export function JoinScreen({ onJoin }: JoinScreenProps) {
     };
 
     if (roomHasPassword && !hasActiveUsers) {
-      await supabase.functions.invoke('room-password', {
-        body: { action: 'delete', roomCode: room }
-      });
+      const existingToken = sessionStorage.getItem(`room_owner_token:${room}`);
+      if (existingToken) {
+        await supabase.functions.invoke('room-password', {
+          body: { action: 'delete', roomCode: room, ownerToken: existingToken }
+        });
+        sessionStorage.removeItem(`room_owner_token:${room}`);
+      }
       showRoomNotFound();
       return;
     }
