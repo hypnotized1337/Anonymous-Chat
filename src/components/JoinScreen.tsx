@@ -142,21 +142,28 @@ export function JoinScreen({ onJoin }: JoinScreenProps) {
       return;
     }
 
-    // Clean stale password if any
+    // Clean stale password if any (only if we own it)
     const { data: checkData } = await supabase.functions.invoke('room-password', {
       body: { action: 'check', roomCode: room }
     });
     if (checkData?.hasPassword) {
-      await supabase.functions.invoke('room-password', {
-        body: { action: 'delete', roomCode: room }
-      });
+      const existingToken = sessionStorage.getItem(`room_owner_token:${room}`);
+      if (existingToken) {
+        await supabase.functions.invoke('room-password', {
+          body: { action: 'delete', roomCode: room, ownerToken: existingToken }
+        });
+        sessionStorage.removeItem(`room_owner_token:${room}`);
+      }
     }
 
     // Set password if toggled
     if (passwordProtect && roomPassword.trim()) {
-      await supabase.functions.invoke('room-password', {
-        body: { action: 'set', roomCode: room, password: roomPassword.trim(), username: username.trim() }
+      const { data: setData } = await supabase.functions.invoke('room-password', {
+        body: { action: 'set', roomCode: room, password: roomPassword.trim() }
       });
+      if (setData?.ownerToken) {
+        sessionStorage.setItem(`room_owner_token:${room}`, setData.ownerToken);
+      }
     }
 
     setCheckingRoom(false);
