@@ -428,9 +428,11 @@ export function useChat() {
           setState(prev => ({ ...prev, messages: [] }));
           // Clean up room password and stored images when room empties
           const currentRoom = roomCode;
+          const ownerToken = sessionStorage.getItem(`room_owner_token:${currentRoom}`);
           supabase.functions.invoke('room-password', {
-            body: { action: 'delete', roomCode: currentRoom },
+            body: { action: 'delete', roomCode: currentRoom, ownerToken: ownerToken || undefined },
           }).catch(() => {});
+          sessionStorage.removeItem(`room_owner_token:${currentRoom}`);
           // Purge room images from storage
           supabase.storage.from('chat-images').list(currentRoom).then(({ data: files }) => {
             if (files && files.length > 0) {
