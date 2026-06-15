@@ -348,7 +348,7 @@ export function useChat() {
           setState(prev => ({ ...prev, ...DEFAULT_ROOM_STATE }));
           setTimeout(() => {
             toast.error('YOU HAVE BEEN REMOVED', {
-              description: 'An admin removed you from the void.',
+              description: 'An admin removed you from the room.',
               duration: 5000,
             });
           }, 100);
@@ -465,11 +465,11 @@ export function useChat() {
             setState(prev => ({ ...prev, ...DEFAULT_ROOM_STATE }));
             setTimeout(() => {
               toast.error('IDENTITY CONFLICT', {
-                description: `"${username}" is already active in this void. Choose another identity.`,
+                description: `"${username}" is already active in this room. Choose another identity.`,
                 duration: 5000,
               });
             }, 100);
-            resolveJoin({ error: 'Username already active in this void. Please choose another identity.' });
+            resolveJoin({ error: 'Username already active in this room. Please choose another identity.' });
             return;
           }
         }
