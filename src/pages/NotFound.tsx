@@ -1,6 +1,5 @@
 import { useLocation, Link } from "react-router-dom";
 import { useEffect } from "react";
-import { GalaxyVoidBackground } from "../components/GalaxyVoidBackground";
 
 const NotFound = () => {
   const location = useLocation();
@@ -11,7 +10,6 @@ const NotFound = () => {
 
   return (
     <>
-      <GalaxyVoidBackground />
       <div className="relative z-10 flex min-h-screen items-center justify-center p-4">
         <div className="text-center">
           <h1 className="mb-2 text-8xl md:text-9xl font-extrabold tracking-tighter text-white/90 drop-shadow-[0_0_15px_rgba(255,255,255,0.8)] animate-pulse">

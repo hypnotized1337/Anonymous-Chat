@@ -4,7 +4,6 @@ import { Helmet } from 'react-helmet-async';
 import { ArrowLeft, Sparkles, Loader2, AlertCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { supabase } from '@/integrations/supabase/client';
-import { InteractiveVoidBackground } from '@/components/InteractiveVoidBackground';
 
 export default function Features() {
   const [summary, setSummary] = useState<string | null>(null);
@@ -32,22 +31,20 @@ export default function Features() {
   return (
     <div className="min-h-screen bg-black text-foreground p-4 sm:p-8 font-mono relative overflow-hidden">
       <Helmet>
-        <title>Features — Chat Ephemeral Chat</title>
+        <title>Features — Chat</title>
         <meta name="description" content="An AI-generated overview of Chat's features: ephemeral rooms, password protection, real-time presence, and more." />
         <link rel="canonical" href="https://chat.lovable.app/features" />
-        <meta property="og:title" content="Features — Chat Ephemeral Chat" />
+        <meta property="og:title" content="Features — Chat" />
         <meta property="og:description" content="An AI-generated overview of Chat's features: ephemeral rooms, password protection, real-time presence, and more." />
         <meta property="og:url" content="https://chat.lovable.app/features" />
       </Helmet>
-      <InteractiveVoidBackground />
-      <div className="grain-overlay" />
 
       <div className="max-w-xl mx-auto relative z-10">
         <Link
           to="/"
           className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-white hover:text-shadow-[0_0_10px_rgba(255,255,255,0.5)] transition-all mb-8"
         >
-          <ArrowLeft className="w-3.5 h-3.5" /> back to reality
+          <ArrowLeft className="w-3.5 h-3.5" /> back home
         </Link>
 
         <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-10 gap-4">

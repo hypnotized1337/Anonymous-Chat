@@ -4,7 +4,6 @@ import { Helmet } from 'react-helmet-async';
 import { ArrowLeft, GitCommit, Loader2, AlertCircle, Sparkles, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '@/integrations/supabase/client';
-import { InteractiveVoidBackground } from '@/components/InteractiveVoidBackground';
 
 interface CachedCommit {
   sha: string;
@@ -86,22 +85,20 @@ export default function Changelog() {
   return (
     <div className="min-h-screen bg-black text-foreground p-4 sm:p-8 font-mono relative overflow-hidden">
       <Helmet>
-        <title>Changelog — Chat Ephemeral Chat</title>
+        <title>Changelog — Chat</title>
         <meta name="description" content="Recent commits and AI-summarized release notes for Chat, a minimalist real-time ephemeral chat." />
         <link rel="canonical" href="https://chat.lovable.app/changelog" />
-        <meta property="og:title" content="Changelog — Chat Ephemeral Chat" />
+        <meta property="og:title" content="Changelog — Chat" />
         <meta property="og:description" content="Recent commits and AI-summarized release notes for Chat." />
         <meta property="og:url" content="https://chat.lovable.app/changelog" />
       </Helmet>
-      <InteractiveVoidBackground />
-      <div className="grain-overlay" />
       
       <div className="max-w-xl mx-auto relative z-10">
         <Link
           to="/"
           className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-white hover:text-shadow-[0_0_10px_rgba(255,255,255,0.5)] transition-all mb-8"
         >
-          <ArrowLeft className="w-3.5 h-3.5" /> back to reality
+          <ArrowLeft className="w-3.5 h-3.5" /> back home
         </Link>
 
         <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-10 gap-4">

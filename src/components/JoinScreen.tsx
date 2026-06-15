@@ -5,7 +5,6 @@ import { motion, AnimatePresence, LayoutGroup } from 'framer-motion';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Switch } from '@/components/ui/switch';
 import { ChangelogDialog } from '@/components/ChangelogDialog';
-import { CanvasVoidBackground } from '@/components/CanvasVoidBackground';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
@@ -225,8 +224,6 @@ export function JoinScreen({ onJoin }: JoinScreenProps) {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden bg-background">
-      <CanvasVoidBackground />
-      <div className="grain-overlay" />
 
       <ChangelogDialog />
       <LayoutGroup>
