@@ -307,8 +307,8 @@ export function ChatArea({
             transition={{ duration: 0.8, delay: 0.3 }}
           >
             <div className="flex flex-col items-center gap-2">
-              <span className="text-sm font-mono text-muted-foreground/30 select-none void-pulse">
-                say something into the void
+              <span className="text-sm font-mono text-muted-foreground/30 select-none ">
+                say something
               </span>
               <span className="text-[10px] font-mono text-muted-foreground/15 select-none">
                 messages are ephemeral

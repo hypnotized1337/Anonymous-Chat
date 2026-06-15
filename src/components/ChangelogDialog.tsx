@@ -3,7 +3,7 @@ import { GitCommit, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '@/integrations/supabase/client';
 
-const STORAGE_KEY = 'v0id_last_seen_sha';
+const STORAGE_KEY = 'chat_last_seen_sha';
 
 interface CachedCommit {
   sha: string;

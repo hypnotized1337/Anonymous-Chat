@@ -32,12 +32,12 @@ export default function Features() {
   return (
     <div className="min-h-screen bg-black text-foreground p-4 sm:p-8 font-mono relative overflow-hidden">
       <Helmet>
-        <title>Features — v0id Ephemeral Chat</title>
-        <meta name="description" content="An AI-generated overview of v0id's features: ephemeral rooms, password protection, real-time presence, and more." />
-        <link rel="canonical" href="https://v0id-chat.lovable.app/features" />
-        <meta property="og:title" content="Features — v0id Ephemeral Chat" />
-        <meta property="og:description" content="An AI-generated overview of v0id's features: ephemeral rooms, password protection, real-time presence, and more." />
-        <meta property="og:url" content="https://v0id-chat.lovable.app/features" />
+        <title>Features — Chat Ephemeral Chat</title>
+        <meta name="description" content="An AI-generated overview of Chat's features: ephemeral rooms, password protection, real-time presence, and more." />
+        <link rel="canonical" href="https://chat.lovable.app/features" />
+        <meta property="og:title" content="Features — Chat Ephemeral Chat" />
+        <meta property="og:description" content="An AI-generated overview of Chat's features: ephemeral rooms, password protection, real-time presence, and more." />
+        <meta property="og:url" content="https://chat.lovable.app/features" />
       </Helmet>
       <InteractiveVoidBackground />
       <div className="grain-overlay" />
@@ -65,7 +65,7 @@ export default function Features() {
 
         {loading && (
           <div className="flex items-center gap-3 text-sm text-white/50 animate-pulse">
-            <Loader2 className="w-4 h-4 animate-spin" /> mapping the void…
+            <Loader2 className="w-4 h-4 animate-spin" /> loading features…
           </div>
         )}
 

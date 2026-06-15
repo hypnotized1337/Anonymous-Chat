@@ -86,12 +86,12 @@ export default function Changelog() {
   return (
     <div className="min-h-screen bg-black text-foreground p-4 sm:p-8 font-mono relative overflow-hidden">
       <Helmet>
-        <title>Changelog — v0id Ephemeral Chat</title>
-        <meta name="description" content="Recent commits and AI-summarized release notes for v0id, a minimalist real-time ephemeral chat." />
-        <link rel="canonical" href="https://v0id-chat.lovable.app/changelog" />
-        <meta property="og:title" content="Changelog — v0id Ephemeral Chat" />
-        <meta property="og:description" content="Recent commits and AI-summarized release notes for v0id." />
-        <meta property="og:url" content="https://v0id-chat.lovable.app/changelog" />
+        <title>Changelog — Chat Ephemeral Chat</title>
+        <meta name="description" content="Recent commits and AI-summarized release notes for Chat, a minimalist real-time ephemeral chat." />
+        <link rel="canonical" href="https://chat.lovable.app/changelog" />
+        <meta property="og:title" content="Changelog — Chat Ephemeral Chat" />
+        <meta property="og:description" content="Recent commits and AI-summarized release notes for Chat." />
+        <meta property="og:url" content="https://chat.lovable.app/changelog" />
       </Helmet>
       <InteractiveVoidBackground />
       <div className="grain-overlay" />
@@ -168,7 +168,7 @@ export default function Changelog() {
 
         {loading && (
           <div className="flex items-center gap-3 text-sm text-white/50 animate-pulse">
-            <Loader2 className="w-4 h-4 animate-spin" /> fetching void records…
+            <Loader2 className="w-4 h-4 animate-spin" /> fetching changelog…
           </div>
         )}
 

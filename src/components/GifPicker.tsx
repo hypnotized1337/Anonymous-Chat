@@ -107,7 +107,7 @@ export function GifPicker({ onSelect, disabled }: GifPickerProps) {
         <div className="max-h-64 overflow-y-auto scrollbar-thin p-1.5 bg-background">
           {loading &&
           <div className="flex justify-center py-8">
-              <span className="text-xs text-muted-foreground animate-pulse">Searching the void...</span>
+              <span className="text-xs text-muted-foreground animate-pulse">Searching…</span>
             </div>
           }
 

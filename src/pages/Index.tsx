@@ -18,14 +18,14 @@ const Index = () => {
   const [authOverlay, setAuthOverlay] = useState(false);
   const [nuking, setNuking] = useState(false);
   const [uiScale, setUiScale] = useState(() => {
-    const saved = localStorage.getItem('v0id-ui-scale');
+    const saved = localStorage.getItem('Chat-ui-scale');
     return saved ? Number(saved) : 100;
   });
 
   const handleScaleChange = useCallback((val: number[]) => {
     const s = val[0];
     setUiScale(s);
-    localStorage.setItem('v0id-ui-scale', String(s));
+    localStorage.setItem('Chat-ui-scale', String(s));
   }, []);
 
   useEffect(() => {
@@ -65,12 +65,12 @@ const Index = () => {
   return (
     <>
       <Helmet>
-        <title>v0id — Ephemeral Room-Based Chat</title>
+        <title>Chat — Ephemeral Room-Based Chat</title>
         <meta name="description" content="Minimalist, account-free real-time chat. Spin up a room, share a code, and everything is deleted on exit — nothing is stored." />
-        <link rel="canonical" href="https://v0id-chat.lovable.app/" />
-        <meta property="og:title" content="v0id — Ephemeral Room-Based Chat" />
+        <link rel="canonical" href="https://chat.lovable.app/" />
+        <meta property="og:title" content="Chat — Ephemeral Room-Based Chat" />
         <meta property="og:description" content="Minimalist, account-free real-time chat. Spin up a room, share a code, and everything is deleted on exit." />
-        <meta property="og:url" content="https://v0id-chat.lovable.app/" />
+        <meta property="og:url" content="https://chat.lovable.app/" />
       </Helmet>
       <AnimatePresence mode="wait">
       {!state.isJoined ? (
