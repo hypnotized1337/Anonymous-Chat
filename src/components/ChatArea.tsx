@@ -255,7 +255,7 @@ export function ChatArea({
           <ThemeToggle />
           <Popover>
             <PopoverTrigger asChild>
-              <button aria-label="Adjust UI scale" className="w-7 h-7 flex items-center justify-center rounded-sm hover:bg-muted text-foreground transition-colors">
+              <button aria-label="Adjust UI scale" className="w-7 h-7 flex items-center justify-center rounded-sm hover:bg-muted text-muted-foreground hover:text-foreground transition-colors">
                 <ZoomIn className="w-4 h-4" />
               </button>
             </PopoverTrigger>
@@ -282,7 +282,7 @@ export function ChatArea({
               rotate: [0, -15, 15, -12, 12, -6, 6, -2, 2, 0],
             } : { rotate: 0 }}
             transition={{ duration: 0.6, ease: 'easeInOut' }}
-            className={`w-7 h-7 flex items-center justify-center rounded-sm hover:bg-muted transition-colors ${notificationsEnabled ? 'text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
+            className="w-7 h-7 flex items-center justify-center rounded-sm hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
           >
             {notificationsEnabled ? <Bell className="w-4 h-4" /> : <BellOff className="w-4 h-4" />}
           </motion.button>
