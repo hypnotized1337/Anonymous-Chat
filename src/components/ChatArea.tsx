@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
-import { Send, Bell, BellOff, LogOut, Plus, ChevronDown, ZoomIn, Users, Lock } from 'lucide-react';
+import { Send, Bell, BellOff, LogOut, Plus, ChevronDown, Users, Lock, Settings } from 'lucide-react';
 import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
 import { Slider } from '@/components/ui/slider';
 import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet';
@@ -252,40 +252,58 @@ export function ChatArea({
           {/* Room code display removed per user request */}
         </div>
         <div className="flex items-center gap-1">
-          <ThemeToggle />
           <Popover>
             <PopoverTrigger asChild>
-              <button aria-label="Adjust UI scale" className="w-7 h-7 flex items-center justify-center rounded-sm hover:bg-muted text-muted-foreground hover:text-foreground transition-colors">
-                <ZoomIn className="w-4 h-4" />
+              <button aria-label="Open settings" className="w-7 h-7 flex items-center justify-center rounded-sm hover:bg-muted text-muted-foreground hover:text-foreground transition-colors">
+                <Settings className="w-4 h-4" />
               </button>
             </PopoverTrigger>
-            <PopoverContent className="w-48 p-3" side="bottom" align="end">
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-[11px] font-mono text-muted-foreground">Scale</span>
-                  <span className="text-[11px] font-mono text-foreground">{uiScale}%</span>
+            <PopoverContent className="w-56 p-2" side="bottom" align="end">
+              <div className="px-1.5 pb-1.5">
+                <span className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground/60">Settings</span>
+              </div>
+              <div className="space-y-1">
+                {/* Theme */}
+                <div className="flex items-center justify-between px-1.5 py-1 rounded-sm">
+                  <span className="text-[11px] font-mono text-foreground">Theme</span>
+                  <ThemeToggle />
                 </div>
-                <Slider
-                  value={[uiScale]}
-                  onValueChange={onScaleChange}
-                  min={100}
-                  max={150}
-                  step={5}
-                />
+
+                {/* Notifications */}
+                <button
+                  onClick={handleNotificationToggle}
+                  className="w-full flex items-center justify-between px-1.5 py-1 rounded-sm hover:bg-muted transition-colors"
+                >
+                  <span className="text-[11px] font-mono text-foreground">Notifications</span>
+                  <motion.span
+                    aria-hidden
+                    animate={notificationJiggle ? {
+                      rotate: [0, -15, 15, -12, 12, -6, 6, -2, 2, 0],
+                    } : { rotate: 0 }}
+                    transition={{ duration: 0.6, ease: 'easeInOut' }}
+                    className="text-muted-foreground"
+                  >
+                    {notificationsEnabled ? <Bell className="w-4 h-4" /> : <BellOff className="w-4 h-4" />}
+                  </motion.span>
+                </button>
+
+                {/* UI Scale */}
+                <div className="px-1.5 py-1 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[11px] font-mono text-foreground">Scale</span>
+                    <span className="text-[11px] font-mono text-muted-foreground">{uiScale}%</span>
+                  </div>
+                  <Slider
+                    value={[uiScale]}
+                    onValueChange={onScaleChange}
+                    min={100}
+                    max={150}
+                    step={5}
+                  />
+                </div>
               </div>
             </PopoverContent>
           </Popover>
-          <motion.button
-            onClick={handleNotificationToggle}
-            aria-label={notificationsEnabled ? 'Disable notifications' : 'Enable notifications'}
-            animate={notificationJiggle ? {
-              rotate: [0, -15, 15, -12, 12, -6, 6, -2, 2, 0],
-            } : { rotate: 0 }}
-            transition={{ duration: 0.6, ease: 'easeInOut' }}
-            className="w-7 h-7 flex items-center justify-center rounded-sm hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
-          >
-            {notificationsEnabled ? <Bell className="w-4 h-4" /> : <BellOff className="w-4 h-4" />}
-          </motion.button>
           <button onClick={onLeave} aria-label="Leave room" className="w-7 h-7 flex items-center justify-center rounded-sm hover:bg-muted text-muted-foreground hover:text-foreground transition-all active:scale-[0.95] md:hidden">
             <LogOut className="w-3.5 h-3.5" />
           </button>
