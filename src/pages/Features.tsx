@@ -29,7 +29,7 @@ export default function Features() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-black text-foreground p-4 sm:p-8 font-mono relative overflow-hidden">
+    <div className="min-h-screen bg-background text-foreground p-4 sm:p-8 font-mono relative overflow-hidden">
       <Helmet>
         <title>Features — Chat</title>
         <meta name="description" content="An AI-generated overview of Chat's features: ephemeral rooms, password protection, real-time presence, and more." />
@@ -77,9 +77,9 @@ export default function Features() {
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ ease: "easeOut", duration: 0.5 }}
-            className="border border-border rounded-xl bg-black/40 backdrop-blur-xl shadow-[0_0_30px_rgba(255,255,255,0.03)] overflow-hidden"
+            className="border border-border rounded-xl bg-card shadow-lg overflow-hidden"
           >
-            <div className="flex items-center gap-2 px-4 py-3 border-b border-white/5 bg-white/[0.02]">
+            <div className="flex items-center gap-2 px-4 py-3 border-b border-border bg-muted/40">
               <Sparkles className="w-3.5 h-3.5 text-foreground/90" />
               <span className="text-[11px] text-muted-foreground font-medium tracking-wide">
                 AI-GENERATED · GEMINI-2.5-FLASH
