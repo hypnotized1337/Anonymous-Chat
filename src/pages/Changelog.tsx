@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-import { ArrowLeft, GitCommit, Loader2, AlertCircle, Sparkles, X } from 'lucide-react';
+import { ArrowLeft, GitCommitVertical as GitCommit, Loader as Loader2, CircleAlert as AlertCircle, Sparkles, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '@/integrations/supabase/client';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 interface CachedCommit {
   sha: string;
@@ -84,6 +85,9 @@ export default function Changelog() {
 
   return (
     <div className="min-h-screen bg-background text-foreground p-4 sm:p-8 font-mono relative overflow-hidden">
+      <div className="fixed top-3 right-3 z-50">
+        <ThemeToggle />
+      </div>
       <Helmet>
         <title>Changelog — Chat</title>
         <meta name="description" content="Recent commits and AI-summarized release notes for Chat, a minimalist real-time ephemeral chat." />

@@ -13,6 +13,7 @@ import { VideoInspector, InspectedVideo } from '@/components/chat/VideoInspector
 import { ReplyPreview } from '@/components/chat/ReplyPreview';
 import { ACCEPTED_FILE_TYPES } from '@/components/chat/FileHelpers';
 import { ChatSidebar } from '@/components/ChatSidebar';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 interface ChatAreaProps {
   messages: ChatMessage[];
@@ -251,6 +252,7 @@ export function ChatArea({
           {/* Room code display removed per user request */}
         </div>
         <div className="flex items-center gap-1">
+          <ThemeToggle />
           <Popover>
             <PopoverTrigger asChild>
               <button aria-label="Adjust UI scale" className="w-7 h-7 flex items-center justify-center rounded-sm hover:bg-muted text-foreground transition-colors">

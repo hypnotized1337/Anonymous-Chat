@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-import { ArrowLeft, Sparkles, Loader2, AlertCircle } from 'lucide-react';
+import { ArrowLeft, Sparkles, Loader as Loader2, CircleAlert as AlertCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { supabase } from '@/integrations/supabase/client';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 export default function Features() {
   const [summary, setSummary] = useState<string | null>(null);
@@ -30,6 +31,9 @@ export default function Features() {
 
   return (
     <div className="min-h-screen bg-background text-foreground p-4 sm:p-8 font-mono relative overflow-hidden">
+      <div className="fixed top-3 right-3 z-50">
+        <ThemeToggle />
+      </div>
       <Helmet>
         <title>Features — Chat</title>
         <meta name="description" content="An AI-generated overview of Chat's features: ephemeral rooms, password protection, real-time presence, and more." />

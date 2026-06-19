@@ -7,6 +7,7 @@ import { ChatSidebar } from '@/components/ChatSidebar';
 import { ChatArea } from '@/components/ChatArea';
 import { AdminPanel } from '@/components/AdminPanel';
 import { AdminAuthOverlay } from '@/components/AdminAuthOverlay';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 const Index = () => {
   const {
@@ -72,6 +73,11 @@ const Index = () => {
         <meta property="og:description" content="Minimalist, account-free real-time chat. Spin up a room, share a code, and everything is deleted on exit." />
         <meta property="og:url" content="https://chat.lovable.app/" />
       </Helmet>
+      {!state.isJoined && (
+        <div className="fixed top-3 right-3 z-50">
+          <ThemeToggle />
+        </div>
+      )}
       <AnimatePresence mode="wait">
       {!state.isJoined ? (
         <motion.div
