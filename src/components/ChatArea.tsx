@@ -248,8 +248,20 @@ export function ChatArea({
             <span className="text-[10px] font-mono">locked</span>
           </div>
         )}
-        <div className="flex-1 flex justify-center">
-          {/* Room code display removed per user request */}
+        <div className="flex-1 flex justify-center items-center gap-3">
+          <div className="flex items-center gap-1.5">
+            <span className="relative flex w-1.5 h-1.5">
+              <span className="absolute inline-flex w-full h-full rounded-full bg-online opacity-60 animate-ping" />
+              <span className="relative inline-flex w-1.5 h-1.5 rounded-full bg-online" />
+            </span>
+            <span className="text-[10px] font-mono text-muted-foreground tabular-nums">
+              {users.length} online
+            </span>
+          </div>
+          <span className="hidden sm:inline-block w-px h-3 bg-border" />
+          <div className="hidden sm:flex items-center gap-1 text-muted-foreground/70">
+            <span className="text-[10px] font-mono tracking-wider">ephemeral</span>
+          </div>
         </div>
         <div className="flex items-center gap-1">
           <Popover>
