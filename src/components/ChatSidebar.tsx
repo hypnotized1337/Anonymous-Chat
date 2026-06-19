@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Users, LogOut, Timer } from 'lucide-react';
+import { Users, LogOut } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { RoomUser } from '@/types/chat';
 
@@ -44,10 +44,7 @@ export function ChatSidebar({ roomCode, users, currentUser, onLeave, className }
         >
           {isRoomNameHovered ? roomCode : '*'.repeat(roomCode.length || 8)}
         </p>
-        <div className="flex items-center gap-1.5 text-muted-foreground mt-1">
-          <Timer className="w-3.5 h-3.5" />
-          <span className="text-xs font-mono">expires in 10m</span>
-        </div>
+
       </div>
 
       <div className="h-px bg-sidebar-border" />

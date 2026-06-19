@@ -313,7 +313,7 @@ export function ChatArea({
                 say something
               </span>
               <span className="text-[10px] font-mono text-muted-foreground/15 select-none">
-                messages are ephemeral
+                messages are not saved
               </span>
             </div>
           </motion.div>
