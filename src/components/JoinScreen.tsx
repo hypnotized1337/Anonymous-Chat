@@ -472,7 +472,7 @@ export function JoinScreen({ onJoin }: JoinScreenProps) {
               whileTap={{ scale: 0.97 }}
               whileHover={!isSubmitDisabled ? { scale: 1.02 } : undefined}>
 
-              <div className="absolute inset-0 -translate-x-full group-hover:animate-[shimmer_1.5s_infinite] bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-12" />
+              <div className="absolute inset-0 -translate-x-full group-hover:animate-[shimmer_1.5s_infinite] bg-gradient-to-r from-transparent via-primary-foreground/20 to-transparent skew-x-12" />
 
               {isLoading ?
                 <>
@@ -513,11 +513,11 @@ export function JoinScreen({ onJoin }: JoinScreenProps) {
             transition={{ duration: 0.4, delay: 1.0 }}>
             
             <div className="flex items-center gap-5">
-              <Link to="/changelog" className="inline-flex items-center gap-1.5 text-xs text-muted-foreground/50 hover:text-white font-mono transition-colors">
+              <Link to="/changelog" className="inline-flex items-center gap-1.5 text-xs text-muted-foreground/50 hover:text-foreground font-mono transition-colors">
                 <GitCommit className="w-3.5 h-3.5" /> changelog
               </Link>
-              <div className="w-1 h-1 rounded-full bg-white/20 shadow-[0_0_8px_rgba(255,255,255,0.5)]" />
-              <Link to="/features" className="inline-flex items-center gap-1.5 text-xs text-muted-foreground/50 hover:text-white font-mono transition-colors">
+              <div className="w-1 h-1 rounded-full bg-border" />
+              <Link to="/features" className="inline-flex items-center gap-1.5 text-xs text-muted-foreground/50 hover:text-foreground font-mono transition-colors">
                 <Sparkles className="w-3.5 h-3.5" /> features
               </Link>
             </div>
@@ -527,7 +527,7 @@ export function JoinScreen({ onJoin }: JoinScreenProps) {
               target="_blank" 
               rel="noopener noreferrer"
               aria-label="View source on GitHub"
-              className="inline-flex items-center gap-1.5 text-xs text-muted-foreground/30 hover:text-white/80 font-mono transition-colors mt-2"
+              className="inline-flex items-center gap-1.5 text-xs text-muted-foreground/30 hover:text-foreground font-mono transition-colors mt-2"
             >
               <Github className="w-4 h-4" />
             </a>
