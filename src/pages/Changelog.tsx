@@ -83,7 +83,7 @@ export default function Changelog() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-foreground p-4 sm:p-8 font-mono relative overflow-hidden">
+    <div className="min-h-screen bg-background text-foreground p-4 sm:p-8 font-mono relative overflow-hidden">
       <Helmet>
         <title>Changelog — Chat</title>
         <meta name="description" content="Recent commits and AI-summarized release notes for Chat, a minimalist real-time ephemeral chat." />
@@ -139,9 +139,9 @@ export default function Changelog() {
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="mb-10 border border-border rounded-xl bg-black/40 backdrop-blur-xl shadow-[0_0_30px_rgba(255,255,255,0.03)] overflow-hidden"
+              className="mb-10 border border-border rounded-xl bg-card shadow-lg overflow-hidden"
             >
-              <div className="flex items-center justify-between px-4 py-3 border-b border-white/5 bg-white/[0.02]">
+              <div className="flex items-center justify-between px-4 py-3 border-b border-border bg-muted/40">
                 <span className="text-[11px] text-muted-foreground flex items-center gap-2 font-medium tracking-wide">
                   <Sparkles className="w-3.5 h-3.5 text-foreground/90" /> AI SUMMARY · GEMINI-2.5-FLASH
                   {summaryCached && (
@@ -197,7 +197,7 @@ export default function Changelog() {
                     className="flex items-start gap-3 group text-[13px] hover:bg-muted/50 rounded-lg px-3 py-2 -ml-3 transition-colors relative"
                   >
                     {/* Tiny connector dot */}
-                    <div className="absolute left-[3px] top-[14px] w-1.5 h-1.5 rounded-full bg-white/20 group-hover:bg-white/60 group- transition-all -translate-x-[50%]" />
+                    <div className="absolute left-[3px] top-[14px] w-1.5 h-1.5 rounded-full bg-border group-hover:bg-foreground/40 transition-all -translate-x-[50%]" />
                     
                     <span className="text-muted-foreground font-medium shrink-0 group-hover:text-foreground/90 transition-colors mt-0.5">
                       {c.sha.slice(0, 7)}
